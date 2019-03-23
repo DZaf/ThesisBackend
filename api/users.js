@@ -6,18 +6,41 @@ const router = express.Router();
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
 
-router.get('/',(req,res)=>{
-    res.send('hello Users!!!')
+// router.get('/',(req,res)=>{
+//     res.send('hello Users!!!')
+// });
+
+//---------------------------------GET--------------------------------
+router.get('/', (req, res) => {
+    User.find()
+        .select()
+        .exec()
+        .then(docs => {
+            const response ={
+                count: docs.length,
+                users: docs.map(doc => {
+                    return{
+                        _id: doc._id,
+                        name: doc.name,
+                        surname: doc.surname,
+                        email: doc.email,
+                        password: doc.password
+                    }
+                })
+            };
+            res.status(200).json(response);
+        })
 });
 
 //-----------------------------------POST------------------------------
 router.post('/', (req, res) => {
+    console.log(req.body);
 
-    const result = validateUser(req.body); // Καλούμε την validateCourse για να κάνουμε validate την είσοδο που παίρνουμε
+    const result = validateUser(req.body); // Καλούμε την validateUser για να κάνουμε validate την είσοδο που παίρνουμε
     // ΑΝ ΤΟ ΠΟΤΕΛΕΣΜΑ ΕΧΕΙ ERROR ΤΟΤΕ ΕΠΙΣΤΡΕΦΟΥΜΕ 400
     if(result.error) return res.status(400).send({success: 'false', message: result.error.details[0].message});
 
-    const user = new Course({ // Δημιουργούμε ένα νέο αντικείμενο Course το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
+    const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         surname: req.body.surname,
@@ -28,6 +51,7 @@ router.post('/', (req, res) => {
     user // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
         .save()
         .then(result => {
+            
             console.log(result);
             res.status(200).json({
                 success: 'true', 

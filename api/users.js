@@ -1,14 +1,14 @@
 const Joi = require('joi'); //ΤΟ ΧΡΗΣΙΜΟΠΟΙΟΥΜΕ ΓΙΑ ΤΟ VALIDATION
 const User = require('../mongo-models/user-model');
 const mongoose = require('mongoose');
+const express = require('express');
+const router = express.Router();
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
 
-app.get('/',(req,res)=>{
+router.get('/',(req,res)=>{
     res.send('hello Users!!!')
 });
-
-
 
 //-----------------------------------POST------------------------------
 router.post('/', (req, res) => {
@@ -53,3 +53,5 @@ function validateUser (user){
     // ΕΛΕΓΧΟΥΜΕ ΤΑ ΔΕΔΟΜΕΝΑ ΠΟΥ ΠΑΙΡΝΟΥΜΕ ΜΕ ΤΟ ΠΡΟΤΥΠΟ(SCHEMA)
     return Joi.validate(user, schema);
 }
+
+module.exports = router;

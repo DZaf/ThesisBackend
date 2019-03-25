@@ -20,7 +20,8 @@
     "@octokit/rest": "^16.20.0",
     "express": "^4.16.4",
     "joi": "^14.3.1",
-    "mongoose": "^5.4.19"
+    "mongoose": "^5.4.19",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

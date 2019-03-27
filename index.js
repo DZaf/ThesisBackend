@@ -28,4 +28,6 @@ app.use(function(req, res, next) {
   });
  
   module.exports = app;
-app.listen(3000, ()=>console.log("listening on port 3000"));
+//PORT
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log('Listening on port ' + port));

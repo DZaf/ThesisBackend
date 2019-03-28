@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 //-----------------------------------POST------------------------------
 router.post('/register', (req, res) => {
     //req.headers("Access-Control-Allow-Origin: *");
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    //res.setHeader('Access-Control-Allow-Origin', '*');
     console.log(req.body);
 
     const result = validateUser(req.body); // Καλούμε την validateUser για να κάνουμε validate την είσοδο που παίρνουμε

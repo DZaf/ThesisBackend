@@ -99,7 +99,6 @@ function validateUser(user) {
 }
 
 function checkUser(user_email) {
-    let userExists ;
     User.findOne({
         email: user_email
     }, function (err, user) {
@@ -108,12 +107,11 @@ function checkUser(user_email) {
         }
         if (user) {
             console.log("iparxei");
-            userExists = true;
+           return true;
         } else {
             console.log("den iparxei");
-            userExists = false;
+            return false;
         }
     });
-return userExists;
 }
 module.exports = router;

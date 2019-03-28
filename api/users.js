@@ -101,7 +101,7 @@ function checkUser(user_email) {
     return User.findOne({
         email: user_email
     }).then(docs => {
-        if (docs.length > 0) {
+        if (docs) {
             return true;
         } else {
             return false;

@@ -49,13 +49,13 @@ router.post('/register', (req, res) => {
 
     let userExists = checkUser(req.body.email);
     console.log(`user exists? ${userExists}`);
-    if (userExists){
+    if (userExists) {
         console.log("user exists");
         return res.status(401).json({
-        success: 'false',
-        message: `user with email ${req.body.email} exists`
-    });
-}
+            success: 'false',
+            message: `user with email ${req.body.email} exists`
+        });
+    }
 
     const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
         _id: new mongoose.Types.ObjectId(),
@@ -99,22 +99,15 @@ function validateUser(user) {
 }
 
 function checkUser(user_email) {
-    var userExists ;
-    User.findOne({
+    
+    return User.findOne({
         email: user_email
-    }, function (err, user) {
-        if (err) {
-            console.log(err);
-        }
-        if (user) {
-            console.log("iparxei");
-            userExists = true;
+    }.then(docs => {
+        if (docs.length > 0) {
+            return true;
         } else {
-            console.log("den iparxei");
-            userExists = false;
+            return false;
         }
-    });
-    console.log("from func " + userExists);
-return userExists;
+    }));
 }
 module.exports = router;

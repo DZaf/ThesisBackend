@@ -11,37 +11,81 @@ router.get('/', function (req, res, next) {
     res.send('respond Github');
 });
 
-router.post("/content/", (req, res) => {
-    url = req.body.url;
-    request(url, function (error, response, body) {
+router.get("/content/", (req, res) => {
+    if (req.query.url) {
+        url = req.query.url;
+        console.log(url);
+        request(url, function (error, response, body) {
 
-        res.send(body); // Print the HTML for the Google homepage.
-      });
-})
-
-router.get('/:search/:language', (req, res) => {
-    // console.log(req.params.search);
-    if (req.params.search) {
-        // "https://api.github.com/search/repositories?q="+req.params.search+"+language:python&sort=stars&order=desc"
-        q = req.params.search + '+language:' + req.params.language;
-        sort = "stars";
-        order = "desc";
-        octokit.search.repos({ q, sort, order }).then(result => {
-            console.log(result.data.items);
-            res.send(result.data.items);
+            res.send(body); // Print the HTML for the Google homepage.
         });
-
     } else {
-        res.send('hello world!!!')
+        res.status("400").send({ "code": "400", "message": "url is required" })
     }
 
 });
 
-router.get('/:search', (req, res) => {
-    // console.log(req.params.search);
+router.get("/content/dir/:owner/:repo_name", (req, res) => {
+    if (req.params.owner) {
+        if (req.params.repo_name) {
+            if (req.query.path) {
+                jsonData = {};
+                owner = req.params.owner;
+                repo = req.params.repo_name;
+                path = req.query.path;
+                jsonData["owner"]=owner;
+                jsonData["repo_name"]=repo;
+                jsonData["path"]=path;
+                jsonData["dir_tree"] = [];
+                octokit.repos.getContents({ owner, repo, path}).then(result => {
+
+                    result.data.forEach(function (file) {
+                        var dir_json = {}
+                        dir_json["name"]=file.name;
+                        dir_json["path"]=file.path;
+                        dir_json["url"]=file.html_url;
+                        dir_json["type"]=file.type;
+                        dir_json["conten_url"]=file.download_url;
+                        if(file.type=="dir")
+                        {
+                            dir_json["isdir"]=true;
+                        }else{
+                            dir_json["isdir"]=false;
+                            dir_json["conten_url"]=file.download_url;
+                        }
+                        jsonData["dir_tree"].push(dir_json);
+
+                    });
+                    res.status("200").send(jsonData);
+
+
+                   
+                    
+                })
+
+            } else {
+                res.status("400").send({ "code": "400", "message": "path is required" })
+            }
+        } else {
+            res.status("400").send({ "code": "400", "message": "repo_name is required" })
+        }
+    } else {
+        res.status("400").send({ "code": "400", "message": "owner is required" })
+    }
+
+});
+
+router.get('/:search/(:language)?', (req, res) => {
+
     if (req.params.search) {
         // "https://api.github.com/search/repositories?q="+req.params.search+"+language:python&sort=stars&order=desc"
         q = req.params.search;
+        if (req.params.language) {
+            console.log(req.params.language);
+            q = req.params.search + '+language:' + req.params.language;
+        }
+        else { q = req.params.search; }
+
         sort = "stars";
         order = "desc";
         per_page = REPOSITORY_PER_PAGE;
@@ -75,19 +119,22 @@ router.get('/:search', (req, res) => {
                                 var tree_json = {}
                                 tree_json["type"] = file.type;
                                 tree_json["name"] = file.name;
+                                tree_json["path"] = file.path;
                                 //  console.log(file.name);
                                 if (file.type == "dir") {
-                                    tree_json["conten_url"] = file.git_url;
+                                    tree_json["isdir"] = true;
+                                    tree_json["conten_url"]=file.download_url;
                                 }
                                 else {
                                     //console.log(file.download_url);
+                                    tree_json["isdir"] = false;
                                     tree_json["conten_url"] = file.download_url;
                                 }
-                                console.log("--------------/-------------");
+                                // console.log("--------------/-------------");
                                 jsonData["repo_tree_size"] = jsonData["repo_tree"].length;
                                 jsonData["repo_tree"].push(tree_json);
-                                console.log(jsonData);
-                                console.log("-------------!--------------");
+                                // console.log(jsonData);
+                                // console.log("-------------!--------------");
                                 // console.log(tree_json);
                                 // console.log("----------------------------");
                             });

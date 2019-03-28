@@ -50,7 +50,6 @@ router.post('/register', (req, res) => {
     const userExists = checkUser(req.body.email);
     console.log(`user exists? ${userExists}`);
     if (userExists){
-        console.log("user exists");
         return res.status(401).json({
         success: 'false',
         message: `user with email ${req.body.email} exists`
@@ -68,8 +67,6 @@ router.post('/register', (req, res) => {
     user // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
         .save()
         .then(result => {
-
-            console.log(result);
             res.status(200).json({
                 success: 'true',
                 message: 'User created successfully',
@@ -99,6 +96,7 @@ function validateUser(user) {
 }
 
 function checkUser(user_email) {
+    const userExists;
     User.findOne({
         email: user_email
     }, function (err, user) {
@@ -106,10 +104,11 @@ function checkUser(user_email) {
             console.log(err);
         }
         if (user) {
-            return true;
+            userExists = true;
         } else {
-            return false;
+            userExists = false;
         }
     });
+return userExists;
 }
 module.exports = router;

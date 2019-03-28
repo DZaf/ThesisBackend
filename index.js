@@ -1,6 +1,7 @@
 const express = require("express");
 const app= express();
 const mongoose = require("mongoose");
+const cors = require('cors');
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
 
 //ΕΔΩ ΤΟΠΟΘΕΤΟΎΜΕ ΤΟ "PATH" ΑΠΟ ΤΑ ΑΡΧΕΙΑ ΠΟΥ ΘΈΛΟΥΜΕ Ο ΧΡΉΣΤΗΣ ΝΑ ΑΝΑΚΑΤΕΥΘΕΊΝΕΤΑΙ (1)
@@ -8,6 +9,7 @@ var users = require('./api/users');
 var github = require('./api/github');
 
 app.use(express.json());
+app.use(cors());
 
 //ΕΔΩ ΕΊΝΑΙ Η ΑΡΧΙΚΉ ΜΑΣ (ΑΝ ΘΕΛΟΥΜΕ ΑΛΛΙΩΣ ΜΠΟΡΕΊ ΕΎΚΟΛΑ ΝΑ ΑΛΛΑΞΕΙ)
 app.get('/',(req,res)=>{

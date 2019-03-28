@@ -48,6 +48,7 @@ router.post('/register', (req, res) => {
     });
 
     let userExists = checkUser(req.body.email);
+    console.log(userExists);
     if (userExists) {
         return res.status(401).json({
             success: 'false',
@@ -102,8 +103,10 @@ function checkUser(user_email) {
         email: user_email
     }).then(docs => {
         if (docs) {
+            console.log("iparxei");
             return true;
         } else {
+            console.log("dn iparxei");
             return false;
         }
     });

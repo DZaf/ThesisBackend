@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
 });
 
 //-----------------------------------POST------------------------------
-router.post('/', (req, res) => {
+router.post('/register', (req, res) => {
     //req.headers("Access-Control-Allow-Origin: *");
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.log(req.body);

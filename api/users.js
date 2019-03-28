@@ -101,8 +101,10 @@ function checkUser(user_email) {
             console.log(err);
         }
         if (user) {
+            console.log(user +" exists");
             return true;
         } else {
+            console.log("user doeasnt exists");
             return false;
         }
     });

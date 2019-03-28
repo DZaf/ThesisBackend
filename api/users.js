@@ -99,15 +99,15 @@ function validateUser(user) {
 }
 
 function checkUser(user_email) {
-    
+
     return User.findOne({
         email: user_email
-    }.then(docs => {
+    }).then(docs => {
         if (docs.length > 0) {
             return true;
         } else {
             return false;
         }
-    }));
+    });
 }
 module.exports = router;

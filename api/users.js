@@ -107,8 +107,10 @@ function checkUser(user_email) {
             console.log(err);
         }
         if (user) {
+            console.log("iparxei");
             userExists = true;
         } else {
+            console.log("den iparxei");
             userExists = false;
         }
     });

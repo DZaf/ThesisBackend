@@ -99,7 +99,7 @@ function validateUser(user) {
 }
 
 function checkUser(user_email) {
-    let userExists ;
+    var userExists ;
     User.findOne({
         email: user_email
     }, function (err, user) {

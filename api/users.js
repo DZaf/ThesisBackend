@@ -58,7 +58,7 @@ router.post('/register', (req, res) => {
             res.status(200).json({
                 success: 'true', 
                 message: 'OK', 
-                createdCourse: result
+                createdUser: result
                 });
             })
         .catch(err => {

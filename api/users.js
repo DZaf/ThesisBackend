@@ -48,9 +48,7 @@ router.post('/register', (req, res) => {
     });
 
     let userExists = checkUser(req.body.email);
-    console.log(`user exists? ${userExists}`);
     if (userExists) {
-        console.log("user exists");
         return res.status(401).json({
             success: 'false',
             message: `user with email ${req.body.email} exists`

@@ -47,10 +47,13 @@ router.post('/register', (req, res) => {
         message: result.error.details[0].message
     });
 
-    if (checkUser(req.body.email)) return res.status(401).json({
+    if (checkUser(req.body.email)){
+        console.log("user exists");
+        return res.status(401).json({
         success: 'false',
         message: `user with email ${req.body.email} exists`
     });
+}
 
     const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
         _id: new mongoose.Types.ObjectId(),
@@ -101,10 +104,8 @@ function checkUser(user_email) {
             console.log(err);
         }
         if (user) {
-            console.log(user +" exists");
             return true;
         } else {
-            console.log("user doeasnt exists");
             return false;
         }
     });

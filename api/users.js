@@ -3,6 +3,7 @@ const User = require('../mongo-models/user-model');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
@@ -48,40 +49,53 @@ router.post('/register', (req, res) => {
     });
 
     checkUser(req.body.email).then((userExists) => {
-console.log(userExists);
+        console.log(userExists);
         if (userExists) return res.status(401).send({
             success: 'false',
             message: `user with email ${req.body.email} exists`
         });
 
+    }, function () {
+        console.log("error");
     })
 
-    const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
-        _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        surname: req.body.surname,
-        email: req.body.email,
-        password: req.body.password
+
+
+
+
+
+    bcrypt.hash(req.body.password, 10, function (err, hash) { //Χρησημοποιούμε την bcrypt.hash για να χασάρουμε τον κωδικό του χρήστη και μέσα σε αυτήν βάζουμε το αντικείμενο user στην βάση
+
+        const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose
+            _id: new mongoose.Types.ObjectId(),
+            name: req.body.name,
+            surname: req.body.surname,
+            email: req.body.email,
+            password: hash
+        });
+
+        user // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
+            .save()
+            .then(result => {
+
+                console.log(result);
+                res.status(200).json({
+                    success: 'true',
+                    message: 'User created successfully',
+                    createdUser: result
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    success: 'false',
+                    message: err
+                });
+            });
+
     });
 
-    user // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
-        .save()
-        .then(result => {
 
-            console.log(result);
-            res.status(200).json({
-                success: 'true',
-                message: 'User created successfully',
-                createdUser: result
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                success: 'false',
-                message: err
-            });
-        });
 });
 
 function validateUser(user) {

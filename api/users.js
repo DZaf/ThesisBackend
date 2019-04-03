@@ -98,6 +98,90 @@ router.post('/register', (req, res) => {
 
 });
 
+//-----------------------------------POST LOGIN------------------------------
+router.post('/login', (req, res) => {
+
+    const result = validateUserLogin(req.body); // Καλούμε την validateUserLogin για να κάνουμε validate την είσοδο που παίρνουμε
+    // ΑΝ ΤΟ ΠΟΤΕΛΕΣΜΑ ΕΧΕΙ ERROR ΤΟΤΕ ΕΠΙΣΤΡΕΦΟΥΜΕ 400
+    if (result.error) return res.status(400).send({
+        success: 'false',
+        message: result.error.details[0].message
+    });
+
+    checkUser(req.body.email).then((userExists) => {
+        if (userExists) {
+            bcrypt.hash(req.body.password, 10, function (err, hash) {
+                checkPassword(req.body.email, hash)
+                    .then((correctPassword) => {
+                        if (!correctPassword) {
+                            return res.status(400).send({ success: 'false', message: "incorrect password" });
+                        }
+                        else {
+                            return res.status(200).send({ success: 'true', message: correctPassword });
+                        }
+                    })
+            });
+        } else {
+            return res.status(401).send({
+                success: 'false',
+                message: `user with email ${req.body.email} doesn't exists`
+            });
+        }
+    });
+
+});
+
+function validateUserLogin(user) {
+    // ΔΗΜΙΟΥΡΓΟΥΜΕ ΕΝΑ ΠΡΟΤΥΠΟ ΓΙΑ ΤΟ ΠΩΣ ΘΕΛΟΥΜΕ ΝΑ ΕΙΝΑΙ ΤΑ ΔΕΔΟΜΕΝΑ ΠΟΥ ΘΑ ΠΑΡΟΥΜΕ
+    const schema = {
+        // ΓΙΑ ΠΑΡΑΔΕΙΓΜΑ ΤΟ NAME ΠΡΕΠΕΙ ΝΑ ΕΧΕΙ ΤΟ ΛΙΓΟΤΕΡΟ 3 ΓΡΑΜΜΑΤΑ ΚΑΙ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ
+        email: Joi.string().email().required(),
+        password: Joi.string().min(3).required(),
+    };
+    // ΕΛΕΓΧΟΥΜΕ ΤΑ ΔΕΔΟΜΕΝΑ ΠΟΥ ΠΑΙΡΝΟΥΜΕ ΜΕ ΤΟ ΠΡΟΤΥΠΟ(SCHEMA)
+    return Joi.validate(user, schema);
+}
+
+function checkPassword(user_email, user_password) {
+    console.log(user_password);
+    return User.find({
+        email: user_email,
+        password: user_password
+    }).select()
+        .exec()
+        .then(docs => {
+            const response = {
+                count: docs.length,
+                users: docs.map(doc => {
+                    return {
+                        _id: doc._id,
+                        name: doc.name,
+                        surname: doc.surname,
+                        email: doc.email,
+                        password: doc.password
+                    }
+                })
+            };
+            if (response.count == 0) {
+                return false;
+            } else {
+                return response.users[0];
+            }
+        })
+
+
+    // .then(docs => {
+    //     if (docs) {
+
+    //         return docs;
+    //     } else {
+    //         return false;
+    //     }
+    // });
+}
+
+
+
 function validateUser(user) {
     // ΔΗΜΙΟΥΡΓΟΥΜΕ ΕΝΑ ΠΡΟΤΥΠΟ ΓΙΑ ΤΟ ΠΩΣ ΘΕΛΟΥΜΕ ΝΑ ΕΙΝΑΙ ΤΑ ΔΕΔΟΜΕΝΑ ΠΟΥ ΘΑ ΠΑΡΟΥΜΕ
     const schema = {

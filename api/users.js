@@ -110,17 +110,18 @@ router.post('/login', (req, res) => {
 
     checkUser(req.body.email).then((userExists) => {
         if (userExists) {
-            bcrypt.hash(req.body.password, 10, function (err, hash) {
-                checkPassword(req.body.email, hash)
-                    .then((correctPassword) => {
-                        if (!correctPassword) {
-                            return res.status(400).send({ success: 'false', message: "incorrect password" });
-                        }
-                        else {
-                            return res.status(200).send({ success: 'true', message: correctPassword });
-                        }
-                    })
-            });
+            // bcrypt.hash(req.body.password, 10, function (err, hash) {
+                checkPassword(req.body.email, req.body.password)
+                .then((correctPassword) => {
+                    console.log(correctPassword);
+                    if (!correctPassword) {
+                        return res.status(400).send({ success: 'false', message: "incorrect password" });
+                    }
+                    else {
+                        return res.status(200).send({ success: 'true', message: correctPassword });
+                    }
+                })
+            // });
         } else {
             return res.status(401).send({
                 success: 'false',
@@ -143,41 +144,29 @@ function validateUserLogin(user) {
 }
 
 function checkPassword(user_email, user_password) {
-    console.log(user_password);
     return User.find({
         email: user_email,
-        password: user_password
     }).select()
         .exec()
-        .then(docs => {
-            const response = {
-                count: docs.length,
-                users: docs.map(doc => {
-                    return {
-                        _id: doc._id,
-                        name: doc.name,
-                        surname: doc.surname,
-                        email: doc.email,
-                        password: doc.password
-                    }
-                })
-            };
-            if (response.count == 0) {
-                return false;
-            } else {
-                return response.users[0];
-            }
-        })
-
-
-    // .then(docs => {
-    //     if (docs) {
-
-    //         return docs;
-    //     } else {
-    //         return false;
-    //     }
-    // });
+        .then(
+            docs => {
+                const response = {
+                    count: docs.length,
+                    users: docs.map(doc => {
+                        return {
+                            _id: doc._id,
+                            name: doc.name,
+                            surname: doc.surname,
+                            email: doc.email,
+                            password: doc.password
+                        }
+                    })
+                };
+                var result = bcrypt.compareSync(user_password, response.users[0].password);
+                if (result) { console.log(result); return response.users[0]; }
+                    else { return false; }
+            })           
+            
 }
 
 

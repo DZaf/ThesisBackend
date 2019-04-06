@@ -19,7 +19,7 @@
   "homepage": "https://github.com/DZaf/ICSD_THESIS_5254#readme",
   "dependencies": {
     "@octokit/rest": "^16.20.0",
-    "bcrypt": "^3.0.5",
+    "bcrypt-nodejs": "0.0.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "joi": "^14.3.1",

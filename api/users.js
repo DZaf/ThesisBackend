@@ -3,7 +3,7 @@ const User = require('../mongo-models/user-model');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcryptjs');
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
@@ -139,12 +139,14 @@ function validateUserLogin(user) {
 }
 
 function checkPassword(user_email, user_password) {
+    
     return User.find({
         email: user_email,
     }).select()
         .exec()
         .then(
             docs => {
+                
                 const response = {
                     count: docs.length,
                     users: docs.map(doc => {
@@ -157,7 +159,11 @@ function checkPassword(user_email, user_password) {
                         }
                     })
                 };
-                var result = bcrypt.compareSync(user_password, response.users[0].password);
+                try {
+                    var result = bcrypt.compareSync(user_password, response.users[0].password);
+                } catch (error) {
+                    console.log(error);
+                } 
                 if (result) { console.log(result); return response.users[0]; }
                     else { return false; }
             })           

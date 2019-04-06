@@ -20,6 +20,7 @@
   "dependencies": {
     "@octokit/rest": "^16.20.0",
     "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "joi": "^14.3.1",

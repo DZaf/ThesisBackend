@@ -59,11 +59,6 @@ router.post('/register', (req, res) => {
         console.log("error");
     })
 
-
-
-
-
-
     bcrypt.hash(req.body.password, 10, function (err, hash) { //Χρησημοποιούμε την bcrypt.hash για να χασάρουμε τον κωδικό του χρήστη και μέσα σε αυτήν βάζουμε το αντικείμενο user στην βάση
 
         const user = new User({ // Δημιουργούμε ένα νέο αντικείμενο User το οποίο θα μπει στην βάση και του δίνουμε τις τιμές από το request του client και το objectId που δημιουργεί αυτόματα η mongoose

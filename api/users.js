@@ -3,7 +3,7 @@ const User = require('../mongo-models/user-model');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true

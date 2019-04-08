@@ -127,13 +127,11 @@ router.post('/login', (req, res) => {
                         // Δημιουργούμε ένα token με βάση το email του χρήστη για να μπορέσουμε να τον αυθεντικοποιήσουμε από το front end 
                         let payload = {subject: req.body.email};
                         let token = jwt.sign(payload, 'secretKey');
-                        
                         return res.status(200).send({
                             success: 'true',
                             message: correctPassword,
-                            token: {
-                                token
-                            }
+                            token : token,
+                            token1 : token1
                         });
                     }
                 })
@@ -224,4 +222,35 @@ function checkUser(user_email) {
         }
     });
 }
+
+
+// --------------------------------- POST VERIFY ---------------------------------------
+router.post('/login/verify', (req, res) => {
+    if(req.body.token)
+    {
+        let payload = jwt.verify(req.body.token, 'secretKey');
+        if(!payload) {
+        return res.status(401).send({
+            success: 'false',
+            message: `Unauthorized request`
+        });       
+        }else{
+            return res.status(200).send({
+                success: 'true',
+                message: `Token ${req.body.token} verified successfully`
+            }); 
+        }
+    }
+    else{
+        return res.status(400).send({
+            success: 'false',
+            message: `Token is needed`
+        });
+    }
+    
+    
+
+})
+
+
 module.exports = router;

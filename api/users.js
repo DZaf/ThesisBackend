@@ -131,7 +131,6 @@ router.post('/login', (req, res) => {
                             success: 'true',
                             message: correctPassword,
                             token : token,
-                            token1 : token1
                         });
                     }
                 })
@@ -225,7 +224,7 @@ function checkUser(user_email) {
 
 
 // --------------------------------- POST VERIFY ---------------------------------------
-router.post('/login/verify', (req, res) => {
+router.post('/verify', (req, res) => {
     if(req.body.token)
     {
         let payload = jwt.verify(req.body.token, 'secretKey');

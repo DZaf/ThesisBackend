@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
     useNewUrlParser: true
@@ -72,12 +73,20 @@ router.post('/register', (req, res) => {
         user // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
             .save()
             .then(result => {
+                // Δημιουργούμε ένα token με βάση το email του χρήστη για να μπορέσουμε να τον αυθεντικοποιήσουμε από το front end 
+                let payload = {
+                    subject: result.email
+                };
+                let token = jwt.sign(payload, 'secretKey');
 
                 console.log(result);
                 res.status(200).json({
                     success: 'true',
                     message: 'User created successfully',
-                    createdUser: result
+                    createdUser: result,
+                    token: {
+                        token
+                    }
                 });
             })
             .catch(err => {
@@ -106,14 +115,26 @@ router.post('/login', (req, res) => {
     checkUser(req.body.email).then((userExists) => {
         if (userExists) {
             // bcrypt.hash(req.body.password, 10, function (err, hash) {
-                checkPassword(req.body.email, req.body.password)
+            checkPassword(req.body.email, req.body.password)
                 .then((correctPassword) => {
                     console.log(correctPassword);
                     if (!correctPassword) {
-                        return res.status(400).send({ success: 'false', message: "incorrect password" });
-                    }
-                    else {
-                        return res.status(200).send({ success: 'true', message: correctPassword });
+                        return res.status(400).send({
+                            success: 'false',
+                            message: "incorrect password"
+                        });
+                    } else {
+                        // Δημιουργούμε ένα token με βάση το email του χρήστη για να μπορέσουμε να τον αυθεντικοποιήσουμε από το front end 
+                        let payload = {subject: req.body.email};
+                        let token = jwt.sign(payload, 'secretKey');
+                        
+                        return res.status(200).send({
+                            success: 'true',
+                            message: correctPassword,
+                            token: {
+                                token
+                            }
+                        });
                     }
                 })
             // });
@@ -139,14 +160,14 @@ function validateUserLogin(user) {
 }
 
 function checkPassword(user_email, user_password) {
-    
+
     return User.find({
-        email: user_email,
-    }).select()
+            email: user_email,
+        }).select()
         .exec()
         .then(
             docs => {
-                
+
                 const response = {
                     count: docs.length,
                     users: docs.map(doc => {
@@ -163,11 +184,15 @@ function checkPassword(user_email, user_password) {
                     var result = bcrypt.compareSync(user_password, response.users[0].password);
                 } catch (error) {
                     console.log(error);
-                } 
-                if (result) { console.log(result); return response.users[0]; }
-                    else { return false; }
-            })           
-            
+                }
+                if (result) {
+                    console.log(result);
+                    return response.users[0];
+                } else {
+                    return false;
+                }
+            })
+
 }
 
 

@@ -251,5 +251,24 @@ router.post('/verify', (req, res) => {
 
 })
 
+// -------------------------------------- DELETE --------------------------------
+router.delete('/:email', (req, res) => {
+const email = req.params.email ;
+//console.log(email);
+User
+    .findOneAndDelete({
+    email: req.params.email,
+})
+    .then( docs => {
+        if (docs)
+        res.send({success: "true",message: `user with email: ${email} succesfully deleted`});
+        else
+        res.send({success: "false",message: `user with email: ${email} doesn't exists`});
+    
+    })
+
+});
+
+
 
 module.exports = router;

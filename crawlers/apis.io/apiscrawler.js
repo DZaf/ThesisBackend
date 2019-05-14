@@ -9,33 +9,32 @@ mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/tes
     useNewUrlParser: true
 });
 
+//----------------------INTRO PAGE--------------------
 router.get('/', function (req, res, next) {
     res.send('respond apis crawler');
 });
-
-router.get('/apisio/:q', function(req, res) {
-    if (req.params.q) {
-        var q = req.params.q
-        console.log(q)
-
+//----------------------GET EVERY API THAT BELONGS ON question RESULT--------------------
+router.get('/apisio/:question', function(req, res) {
+    if (req.params.question) {
+        var question = req.params.question
         try {
-            http.get('http://apis.io/api/search?q=' + q + '&limit=120', (resp) => {
+            //SEND A GET REQUEST ON THE LINK BELOW WITH THE question WE WANT TO MAKE AND THE LIMIT OF RESULTS TO 120
+            http.get('http://apis.io/api/search?q=' + question + '&limit=120', (resp) => {
                 let data = '';
-                // A chunk of data has been recieved.
-                resp.on('data', (chunk) => {
-                    data += chunk;
-                });
                 // The whole response has been received. Print out the result.
                 resp.on('end', () => {
                         JSON.parse(data).data.forEach(element => {
+                        //we check on the database if there is already the element in the database
                         Apisio.findOne({
                             apisioAPI: element
                         }).then(docs => {
+                            //if there is in the database then we do nothing
                             if (docs) {
-                                console.log("iparxei");
+                                console.log("exists");
                             } else {
-                                //console.log("dn iparxei");
+                                //if there isn't in the database then we create an object that contains the data of the element
                                 const apisio = new Apisio({ apisioAPI: element });
+                                //and we save the object to the database
                                 apisio.save()
                                     .then(result => {
                                         console.log("ok");

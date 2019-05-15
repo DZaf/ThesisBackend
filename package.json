@@ -28,7 +28,6 @@
     "jsonwebtoken": "^8.5.1",
     "line-reader": "^0.4.0",
     "mongoose": "^5.4.19",
-    "puppeteer": "^1.16.0",
     "request": "^2.88.0"
   },
   "devDependencies": {

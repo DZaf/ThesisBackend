@@ -10,13 +10,15 @@ var github = require('./api/github');
 var apiscrawler = require('./crawlers/apis.io/apiscrawler');
 var pwcrawler = require('./crawlers/pw/pwcrawler');
 var apiguru = require('./crawlers/apisguru/apigurucrawler');
+var apiguruelement = require('./mergers/elementsearcher');
+var apisioelement = require('./mergers/apisiosearcher');
 
 app.use(express.json());
 app.use(cors());
 
 //ΕΔΩ ΕΊΝΑΙ Η ΑΡΧΙΚΉ ΜΑΣ (ΑΝ ΘΕΛΟΥΜΕ ΑΛΛΙΩΣ ΜΠΟΡΕΊ ΕΎΚΟΛΑ ΝΑ ΑΛΛΑΞΕΙ)
 app.get('/',(req,res)=>{
-    res.send('go on /users or /github or /crawlers/apis or /crawler/pw');
+    res.send('go on /users or /github or /crawlers/apis or /crawler/pw or /merger/apiguru');
 });
 
 // ΕΔΩ ΧΡΗΣΙΜΟΠΟΙΩΝΤΑΣ ΤΟ (1) ΒΆΖΟΥΜΕ ΤΑ ΣΩΣΤΆ PATH ΔΛΔ ΌΤΑΝ Ο ΧΡΉΣΤΗΣ ΧΤΥΠΆΕΙ /ΚΑΤΙ NA ΤΟΥ ΕΜΦΑΝΊΖΕΙ ΤΟ /API/KATI
@@ -25,6 +27,8 @@ app.use('/github',github);
 app.use('/crawler/apis',apiscrawler);
 app.use('/crawler/pw',pwcrawler);
 app.use('/crawler/apiguru',apiguru);
+app.use('/merger/apiguru',apiguruelement);
+app.use('/merger/apisio',apisioelement);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

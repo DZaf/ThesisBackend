@@ -34,7 +34,7 @@ router.get('/:0/:1', (req, res) => {
 
 });
 
-router.get('/page:start/:finish', (req, res) => {
+router.get('/page/:start/:finish', (req, res) => {
     bigjson = {}
     bigjson["data"] = []
     var counter = -1;

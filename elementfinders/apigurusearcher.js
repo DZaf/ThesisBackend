@@ -1,41 +1,48 @@
 var express = require('express');
 const mongoose = require("mongoose");
-const Apisio = require('../mongo-models/apis-model')
 const router = express.Router();
+var data = require('../crawlers/apisguru/apisguru.json');
 const fs = require('fs');
 
-mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
-    useNewUrlParser: true
-});
-
 router.get('/', function (req, res, next) {
-    res.send('respond element merger apisio');
+    res.send('respond element finder apiguru');
 });
 
 router.get('/txtwriter', function (req, res, next) {
-    Apisio.find({}, function(err, element) {
-        fs.appendFile('apisioallitems.txt', JSON.stringify(element)+",\n", function (err) {
+    data.forEach(element => {
+        console.log(element);
+        fs.appendFile('allitems.txt', JSON.stringify(element)+",\n", function (err) {
             if (err) throw err;
         });
-      });
-      res.send("ok");  
+    });
+    res.send('finished');
 });
 
 router.get('/txtcrawler', function (req, res, next) {
-    var filename = 'apisioallitems.txt';
+    var filename = 'allitems.txt';
     var str = fs.readFileSync(filename).toString();
-    var pattern = /("\w*":)/g;
+    var pattern = /("[\w*-?]*":)/g;
     var dirtyarray = str.match(pattern);
     var len = dirtyarray.length;
+    console.log(len+"\n");
     var cleanarray=[];
-    console.log(len)
+    var nodigitarray=[];
     dirtyarray.forEach(dirtyitem=>{
         cleanarray.push(dirtyitem.replace(/":?/g,''))
     })
-    var unique = cleanarray.filter(onlyUnique);
+    cleanarray.forEach(numbereditem=>{
+        if(numbereditem.match(/\d/gm))
+        {
+            //console.log(numbereditem);
+        }
+        else{
+            nodigitarray.push(numbereditem);
+        }
+    })
+    var unique = nodigitarray.filter(onlyUnique);
     console.log(unique.length+'\n');
     unique.forEach(string =>{
-        fs.appendFile('apisioelements.txt', string+",\n", function (err) {
+        fs.appendFile('allelements.txt', string+",\n", function (err) {
             if (err) throw err;
         });
     })

@@ -10,8 +10,9 @@ var github = require('./api/github');
 var apiscrawler = require('./crawlers/apis.io/apiscrawler');
 var pwcrawler = require('./crawlers/pw/pwcrawler');
 var apiguru = require('./crawlers/apisguru/apigurucrawler');
-var apiguruelement = require('./mergers/elementsearcher');
-var apisioelement = require('./mergers/apisiosearcher');
+var apiguruelement = require('./elementfinders/apigurusearcher');
+var apisioelement = require('./elementfinders/apisiosearcher');
+var pwelement = require('./elementfinders/pwsearcher');
 
 app.use(express.json());
 app.use(cors());
@@ -27,8 +28,9 @@ app.use('/github',github);
 app.use('/crawler/apis',apiscrawler);
 app.use('/crawler/pw',pwcrawler);
 app.use('/crawler/apiguru',apiguru);
-app.use('/merger/apiguru',apiguruelement);
-app.use('/merger/apisio',apisioelement);
+app.use('/element/apiguru',apiguruelement);
+app.use('/element/apisio',apisioelement);
+app.use('/element/pw',pwelement);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

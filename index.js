@@ -13,6 +13,7 @@ var apiguru = require('./crawlers/apisguru/apigurucrawler');
 var apiguruelement = require('./elementfinders/apigurusearcher');
 var apisioelement = require('./elementfinders/apisiosearcher');
 var pwelement = require('./elementfinders/pwsearcher');
+var pwmerger = require('./mergers/mergers');
 
 app.use(express.json());
 app.use(cors());
@@ -31,6 +32,7 @@ app.use('/crawler/apiguru',apiguru);
 app.use('/element/apiguru',apiguruelement);
 app.use('/element/apisio',apisioelement);
 app.use('/element/pw',pwelement);
+app.use('/mergers/',pwmerger);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

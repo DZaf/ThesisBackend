@@ -4,6 +4,7 @@ const pw = require('../mongo-models/pw-model.js')
 const apisio = require('../mongo-models/apis-model')
 const apiguru = require('../mongo-models/apiguru-model')
 const PwPlusApisio = require('../mongo-models/pwPlusApisio-model')
+const Apidb = require('../mongo-models/apidb-model')
 const router = express.Router();
 //const fs = require('fs');
 
@@ -263,8 +264,8 @@ function checkIfExists(myObject) {
 }
 
 function checkIfPwExists(myObject) {
-    console.log("--------------------------------------------------------------------------");  
-    console.log(myObject);  
+    console.log("--------------------------------------------------------------------------");
+    console.log(myObject);
     console.log("--------------------------------------------------------------------------");
     PwPlusApisio.findOne({ "thirdObject": myObject }).then(docs => {
         if (docs) {
@@ -368,11 +369,287 @@ function addNewPwObject(id, myObject) {
     PwPlusApisio.updateOne(
         { _id: id },
         { thirdObject: myObject }, function (err, affected) {
-            if(err) throw err
-            if(affected) { console.log(affected)}
-          }
+            if (err) throw err
+            if (affected) { console.log(affected) }
+        }
 
     );
 }
+
+
+router.get('/findElements/apiguru', function (req, res, next) {
+
+    PwPlusApisio.find({ "firstObject.apiguru": { $exists: true } }).stream()
+        .on('data', function (doc) {
+            var version = doc.firstObject.apiguru["preferred"];
+            //console.log(doc)
+            var apiguruObject = doc.firstObject.apiguru.versions[version]
+            var apiguruInfo = apiguruObject.info
+            var json = {
+                "createdAt": doesExist(apiguruObject.added),
+                "name": doesExist(apiguruInfo.title),
+                "description": doesExist(apiguruInfo.description),
+                "imageUrl": doesExist(doesExist(apiguruInfo["x-logo"]).url),
+                "homePage": doesExist(apiguruInfo["x-providerName"]),
+                "endpoint": "",
+                "tags": "",
+                "swaggerUrl": doesExist(apiguruInfo.swaggerUrl),
+                "slug": "",
+                "updatedAt": doesExist(apiguruInfo.updated),
+                "licenseUrl": doesExist(doesExist(apiguruInfo.license).url),
+                "category": doesExist(apiguruInfo["x-apisguru-categories"]),
+                "provider": doesExist(apiguruInfo["x-providerName"]),
+                "SSLSuport": "",
+                "autheticationModel": "",
+                "termsOfServiceUrl": doesExist(apiguruInfo.termsOfService),
+                "architecturalModel": "",
+                "supportedResponseFormats": "",
+                "supportedRequestFormats": "",
+                "documentationUrl": doesExist(doesExist(apiguruInfo.externalDocs).url)
+            }
+            console.log(json)
+
+
+        })
+        .on('error', function (err) {
+            // handle error
+        })
+        .on('end', function () {
+            console.log("hey im done")
+        });
+
+    res.send("ante geia");
+});
+
+router.get('/findElements/pw', function (req, res, next) {
+
+    PwPlusApisio.find({ "thirdObject.pwAPI": { $exists: true } }).stream()
+        .on('data', function (doc) {
+            var pwObject = doc.thirdObject.pwAPI
+            var category = []
+            if (pwObject["Primary Category"]) {
+                category.push(pwObject["Primary Category"].replace(/\/category\//g, ''))
+            }
+            if (pwObject["Secondary Categories"]) {
+                category.push(pwObject["Secondary Categories"].replace(/\/category\//g, ''))
+            }
+            if (category.length == 0) {
+                category = ""
+            }
+
+            var json = {
+                "createdAt": "",
+                "name": doesExist(pwObject["API Title"]),
+                "description": doesExist(pwObject["API Description"]),
+                "imageUrl": "",
+                "homePage": doesExist(pwObject["API Portal / Home Page"]),
+                "endpoint": doesExist(pwObject["API Endpoint"]),
+                "tags": "",
+                "swaggerUrl": "",
+                "slug": "",
+                "updatedAt": "",
+                "licenseUrl": "",
+                "category": category,
+                "provider": doesExist(pwObject["API Provider"]),
+                "SSLSuport": doesExist(pwObject["SSL Suport"]),
+                "autheticationModel": doesExist(pwObject["Authentication Model"]),
+                "termsOfServiceUrl": doesExist(pwObject["Terms Of Service URL"]),
+                "architecturalModel": doesExist(pwObject["Architectural Style"]),
+                "supportedResponseFormats": doesExist(pwObject["Supported Response Formats"]),
+                "supportedRequestFormats": doesExist(pwObject["Supported Request Formats"]),
+                "documentationUrl": doesExist(pwObject["Docs Home Page URL"])
+            }
+            console.log(json)
+            
+
+
+        })
+        .on('error', function (err) {
+            // handle error
+        })
+        .on('end', function () {
+            console.log("hey im done pw")
+        });
+
+    res.send("ante geia pw");
+});
+
+router.get('/findElements/apisio', function (req, res, next) {
+
+    PwPlusApisio.find({ "secondObject.apisioAPI": { $exists: true } }).stream()
+        .on('data', function (doc) {
+            //console.log(doc)
+            var apisioObject = doc.secondObject.apisioAPI
+            var endpoint = "";
+            if (apisioObject.baseURL) {
+                endpoint = apisioObject.baseURL;
+            }
+            if (apisioObject.machineURL) {
+                endpoint = apisioObject.machineURL;
+            }
+            var json = {
+                "createdAt": doesExist(apisioObject.createdAt),
+                "name": doesExist(apisioObject.name),
+                "description": doesExist(apisioObject.description),
+                "imageUrl": doesExist(apisioObject.image),
+                "homePage": doesExist(apisioObject.humanURL),
+                "endpoint": endpoint,
+                "tags": doesExist(apisioObject.tags),
+                "swaggerUrl": "",
+                "slug": doesExist(apisioObject.slug),
+                "updatedAt": doesExist(apisioObject.updatedAt),
+                "licenseUrl": "",
+                "category": "",
+                "provider": "",
+                "SSLSuport": "",
+                "autheticationModel": "",
+                "termsOfServiceUrl": "",
+                "architecturalModel": "",
+                "supportedRequestFormats": "",
+                "supportedResponseFormats": "",
+                "documentationUrl": ""
+            }
+            console.log(json)
+
+
+        })
+        .on('error', function (err) {
+            // handle error
+        })
+        .on('end', function () {
+            console.log("hey im done")
+        });
+
+    res.send("ante geia");
+});
+
+router.get('/findElements', function (req, res, next) {
+
+    PwPlusApisio.find({}).stream()
+        .on('data', function (doc) {
+            var apiguruObject = {};
+            var apisioObject = {};
+            var pwObject = {};
+            var apiguruInfo={};
+            var category = []
+            if (doc.firstObject.apiguru) {
+                var version = doc.firstObject.apiguru["preferred"];
+                apiguruObject = doc.firstObject.apiguru.versions[version]
+                apiguruInfo = apiguruObject.info
+                category=doesExist(apiguruInfo["x-apisguru-categories"]);
+
+            }
+            var endpoint=''
+            if(doc.secondObject.apisioAPI)
+            {
+                apisioObject = doc.secondObject.apisioAPI
+                if (apisioObject.baseURL) {
+                    endpoint = apisioObject.baseURL;
+                }
+                if (apisioObject.machineURL) {
+                    endpoint = apisioObject.machineURL;
+                }
+            }
+            if(doc.thirdObject.pwAPI)
+            {
+                pwObject = doc.thirdObject.pwAPI
+                if (pwObject["Primary Category"]) {
+                    category.push(pwObject["Primary Category"].replace(/\/category\//g, ''))
+                }
+                if (pwObject["Secondary Categories"]) {
+                    category.push(pwObject["Secondary Categories"].replace(/\/category\//g, ''))
+                }
+                if (category.length == 0) {
+                    category = ""
+                }
+            }
+            var categories= "";
+            if(category.length>0)
+            {
+                categories= category.filter(onlyUnique);
+            }
+           
+            
+           
+            
+
+
+            var json={
+                "createdAt":chooseOne(doesExist(doesExist(apiguruObject).added),doesExist(doesExist(apisioObject).createdAt),"") ,
+                "name": chooseOne(doesExist(apiguruInfo.title),doesExist(doesExist(apisioObject).name),doesExist(pwObject["API Title"])) ,
+                "description": chooseOne(doesExist(apiguruInfo.description),doesExist(doesExist(apisioObject).description),doesExist(pwObject["API Description"])) ,
+                "imageUrl": chooseOne(doesExist(doesExist(apiguruInfo["x-logo"]).url),doesExist(doesExist(apisioObject).image),"") ,
+                "homePage": chooseOne(doesExist(apiguruInfo["x-providerName"]),doesExist(doesExist(apisioObject).humanURL),doesExist(pwObject["API Portal / Home Page"]))  ,
+                "endpoint": chooseOne("",endpoint,doesExist(pwObject["API Endpoint"])),
+                "tags": doesExist(apisioObject.tags),
+                "swaggerUrl": chooseOne(doesExist(apiguruInfo.swaggerUrl),"","") ,
+                "slug": chooseOne("",doesExist(doesExist(apisioObject).slug),"") ,
+                "updatedAt": chooseOne(doesExist(apiguruInfo.updated),doesExist(doesExist(apisioObject).updatedAt),"") ,
+                "licenseUrl": chooseOne(doesExist(doesExist(apiguruInfo.license).url),"","") ,
+                "category": categories ,
+                "provider": chooseOne(doesExist(apiguruInfo["x-providerName"]),"",doesExist(pwObject["API Provider"]).replace(/\/company\//g, '')) ,
+                "SSLSuport": chooseOne("","",doesExist(pwObject["SSL Suport"])) ,
+                "autheticationModel":chooseOne("","",doesExist(pwObject["Authentication Model"])) ,
+                "termsOfServiceUrl": chooseOne(doesExist(apiguruInfo.termsOfService),"",doesExist(pwObject["Terms Of Service URL"])) ,
+                "architecturalModel": chooseOne("","",doesExist(pwObject["Architectural Style"])) ,
+                "supportedRequestFormats":chooseOne("","",doesExist(pwObject["Supported Response Formats"])),
+                "supportedResponseFormats": chooseOne("","",doesExist(pwObject["Supported Request Formats"])) ,
+                "documentationUrl": chooseOne(doesExist(doesExist(apiguruInfo.externalDocs).url),"",doesExist(pwObject["Docs Home Page URL"])) 
+                 }
+                 //console.log(json);
+
+                 const api = new Apidb({
+                    api:json
+                });
+    
+                api // Κάνουμε save για να αποθηκευτεί στη βάση και μετά επιστρέφουμε κατάλληλο μήνυμα αν όλα πήγαν καλά και αντίστοιχα αν προέκυψε σφάλμα
+                    .save()
+                    .then(result => {
+    
+                        console.log(result);
+    
+                    })
+                    .catch(err => {
+                        console.log(err);
+    
+                    });
+
+        })
+        .on('error', function (err) {
+            // handle error
+        })
+        .on('end', function () {
+            console.log("hey im done")
+        });
+
+    res.send("ante geia");
+});
+
+
+
+function chooseOne(apiguru, apisio, pw) {
+    if (apiguru != '') {
+        return apiguru;
+    }
+    else if (apisio != '') {
+        return apisio;
+    }
+    else if (pw != '') {
+        return pw;
+    }
+    return '';
+}
+
+function doesExist(element) {
+    if (element) {
+        return element;
+    }
+    return '';
+}
+
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+
 
 module.exports = router;

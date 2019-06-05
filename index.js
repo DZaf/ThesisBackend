@@ -14,6 +14,8 @@ var apiguruelement = require('./elementfinders/apigurusearcher');
 var apisioelement = require('./elementfinders/apisiosearcher');
 var pwelement = require('./elementfinders/pwsearcher');
 var pwmerger = require('./mergers/mergers');
+var ontology = require('./owl/ontologies');
+var ns = require('./owl/ns');
 
 app.use(express.json());
 app.use(cors());
@@ -33,6 +35,8 @@ app.use('/element/apiguru',apiguruelement);
 app.use('/element/apisio',apisioelement);
 app.use('/element/pw',pwelement);
 app.use('/mergers/',pwmerger);
+app.use('/ontologies/',ontology);
+app.use('/ns/',ns);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

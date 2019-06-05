@@ -16,6 +16,7 @@ var pwelement = require('./elementfinders/pwsearcher');
 var pwmerger = require('./mergers/mergers');
 var ontology = require('./owl/ontologies');
 var ns = require('./owl/ns');
+var path = require('path');
 
 app.use(express.json());
 app.use(cors());
@@ -37,6 +38,12 @@ app.use('/element/pw',pwelement);
 app.use('/mergers/',pwmerger);
 app.use('/ontologies/',ontology);
 app.use('/ns/',ns);
+// app.use(express.static(path.join("./owl/triples.ttl", 'public')));
+
+
+app.get('/owl/triples',(req,res)=>{ 
+  res.sendFile('owl/triples.ttl' , { root : __dirname});
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

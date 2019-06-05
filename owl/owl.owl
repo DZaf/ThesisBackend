@@ -1,0 +1,244 @@
+@prefix : <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <https://thesis-server-icsd14052-54.herokuapp.com/ontologies> .
+
+<https://thesis-server-icsd14052-54.herokuapp.com/ontologies> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi
+:assignedInApi rdf:type owl:ObjectProperty ;
+               owl:inverseOf :hasTag ;
+               rdfs:domain :Tag ;
+               rdfs:range :WebAPI .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasCategory
+:hasCategory rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isCategoryOf ;
+             rdfs:domain :WebAPI ;
+             rdfs:range :Category .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasProtocol
+:hasProtocol rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isProtocolOf ;
+             rdfs:domain :WebAPI ;
+             rdfs:range :Protocol .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasProvider
+:hasProvider rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isProviderOf ;
+             rdfs:domain :WebAPI ;
+             rdfs:range :Provider .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasSupportedReqFormat
+:hasSupportedReqFormat rdf:type owl:ObjectProperty ;
+                       owl:inverseOf :isSupportedReqFormatTo ;
+                       rdfs:domain :WebAPI ;
+                       rdfs:range :DataRequestFormat .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasSupportedResFormat
+:hasSupportedResFormat rdf:type owl:ObjectProperty ;
+                       owl:inverseOf :isSupportedResFormatTo ;
+                       rdfs:domain :WebAPI ;
+                       rdfs:range :DataResponseFormat .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasTag
+:hasTag rdf:type owl:ObjectProperty ;
+        rdfs:domain :WebAPI ;
+        rdfs:range :Tag .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isCategoryOf
+:isCategoryOf rdf:type owl:ObjectProperty ;
+              rdfs:domain :Category ;
+              rdfs:range :WebAPI .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProtocolOf
+:isProtocolOf rdf:type owl:ObjectProperty ;
+              rdfs:domain :Protocol ;
+              rdfs:range :WebAPI .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProviderOf
+:isProviderOf rdf:type owl:ObjectProperty ;
+              rdfs:domain :Provider ;
+              rdfs:range :WebAPI .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedReqFormatTo
+:isSupportedReqFormatTo rdf:type owl:ObjectProperty ;
+                        rdfs:domain :DataRequestFormat ;
+                        rdfs:range :WebAPI .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedResFormatTo
+:isSupportedResFormatTo rdf:type owl:ObjectProperty ;
+                        rdfs:domain :DataResponseFormat ;
+                        rdfs:range :WebAPI .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#SSLSupport
+:SSLSupport rdf:type owl:DatatypeProperty ;
+            rdfs:domain :WebAPI ;
+            rdfs:range xsd:boolean ;
+            rdfs:comment "if the WebAPI supports ssl"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#auth_model
+:auth_model rdf:type owl:DatatypeProperty ;
+            rdfs:domain :WebAPI ;
+            rdfs:range xsd:string ;
+            rdfs:comment "the authentication model of WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#created_at
+:created_at rdf:type owl:DatatypeProperty ;
+            rdfs:domain :WebAPI ;
+            rdfs:range xsd:dateTime ;
+            rdfs:comment "the date that the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#description
+:description rdf:type owl:DatatypeProperty ;
+             rdfs:domain :WebAPI ;
+             rdfs:range xsd:string ;
+             rdfs:comment "the description of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#doc_url
+:doc_url rdf:type owl:DatatypeProperty ;
+         rdfs:domain :WebAPI ;
+         rdfs:range xsd:string ;
+         rdfs:comment "the url of the documentation of WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#endpoint
+:endpoint rdf:type owl:DatatypeProperty ;
+          rdfs:domain :WebAPI ;
+          rdfs:range xsd:string ;
+          rdfs:comment "the endpoint url of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#homepage
+:homepage rdf:type owl:DatatypeProperty ;
+          rdfs:domain :WebAPI ;
+          rdfs:range xsd:string ;
+          rdfs:comment "the url of the homepage of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#image
+:image rdf:type owl:DatatypeProperty ;
+       rdfs:domain :WebAPI ;
+       rdfs:range xsd:string ;
+       rdfs:comment "the url of the logo of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#license_url
+:license_url rdf:type owl:DatatypeProperty ;
+             rdfs:domain :WebAPI ;
+             rdfs:range xsd:string ;
+             rdfs:comment "the url of the license of WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#name
+:name rdf:type owl:DatatypeProperty ;
+      rdfs:domain :WebAPI ;
+      rdfs:range xsd:string ;
+      rdfs:comment "the name of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#slug
+:slug rdf:type owl:DatatypeProperty ;
+      rdfs:domain :WebAPI ;
+      rdfs:range xsd:string ;
+      rdfs:comment "the slug format of the name of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#swagger_url
+:swagger_url rdf:type owl:DatatypeProperty ;
+             rdfs:domain :WebAPI ;
+             rdfs:range xsd:string ;
+             rdfs:comment "the swagger url of the json of the WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#terms_of_service
+:terms_of_service rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :WebAPI ;
+                  rdfs:range xsd:string ;
+                  rdfs:comment "the terms of service url of WebAPI"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title
+:title rdf:type owl:DatatypeProperty ;
+       rdfs:domain :Category ,
+                   :DataFormat ,
+                   :Protocol ,
+                   :Provider ,
+                   :Tag ;
+       rdfs:range xsd:string ;
+       rdfs:comment "The title of the Class"^^xsd:string .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#update_at
+:update_at rdf:type owl:DatatypeProperty ;
+           rdfs:domain :WebAPI ;
+           rdfs:range xsd:dateTime ;
+           rdfs:comment "the laast updated date of the WebAPI"^^xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Category
+:Category rdf:type owl:Class .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#DataFormat
+:DataFormat rdf:type owl:Class .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#DataRequestFormat
+:DataRequestFormat rdf:type owl:Class ;
+                   rdfs:subClassOf :DataFormat .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#DataResponseFormat
+:DataResponseFormat rdf:type owl:Class ;
+                    rdfs:subClassOf :DataFormat .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Protocol
+:Protocol rdf:type owl:Class .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Provider
+:Provider rdf:type owl:Class .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tag
+:Tag rdf:type owl:Class .
+
+
+###  https://thesis-server-icsd14052-54.herokuapp.com/ontologies#WebAPI
+:WebAPI rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

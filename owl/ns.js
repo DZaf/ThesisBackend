@@ -52,4 +52,10 @@ router.get('/dataResFormats/:name', (req, res) => {
     
 });
 
+router.get('/webAPIs/:name', (req, res) => {
+
+    res.send("i am an ontology");
+    
+});
+
 module.exports = router;

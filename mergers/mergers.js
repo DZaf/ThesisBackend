@@ -588,7 +588,7 @@ router.get('/findElements', function (req, res, next) {
                 "licenseUrl": chooseOne(doesExist(doesExist(apiguruInfo.license).url),"","") ,
                 "category": categories ,
                 "provider": chooseOne(doesExist(apiguruInfo["x-providerName"]),"",doesExist(pwObject["API Provider"]).replace(/\/company\//g, '')) ,
-                "SSLSuport": chooseOne("","",doesExist(pwObject["SSL Suport"])) ,
+                "SSLSupport": chooseOne("","",doesExist(pwObject["SSL Support"])) ,
                 "autheticationModel":chooseOne("","",doesExist(pwObject["Authentication Model"])) ,
                 "termsOfServiceUrl": chooseOne(doesExist(apiguruInfo.termsOfService),"",doesExist(pwObject["Terms Of Service URL"])) ,
                 "architecturalModel": chooseOne("","",doesExist(pwObject["Architectural Style"])) ,

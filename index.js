@@ -49,6 +49,10 @@ app.get('/owl/ourdata',(req,res)=>{
   res.sendFile('owl/pollestriples.owl' , { root : __dirname});
 });
 
+app.get('/owl/ourdata1',(req,res)=>{ 
+  res.sendFile('owl/pollestriples.rdf' , { root : __dirname});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

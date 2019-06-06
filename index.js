@@ -43,6 +43,11 @@ app.use('/ns/',ns);
 
 app.get('/owl/triples',(req,res)=>{ 
   res.sendFile('owl/triples.ttl' , { root : __dirname});
+  
+});
+app.get('/owl/ourdata',(req,res)=>{ 
+  res.sendFile('owl/pollestriples.owl' , { root : __dirname});
+  pollestriples.owl
 });
 
 // catch 404 and forward to error handler

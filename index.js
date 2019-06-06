@@ -47,7 +47,6 @@ app.get('/owl/triples',(req,res)=>{
 });
 app.get('/owl/ourdata',(req,res)=>{ 
   res.sendFile('owl/pollestriples.owl' , { root : __dirname});
-  pollestriples.owl
 });
 
 // catch 404 and forward to error handler

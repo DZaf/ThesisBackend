@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Apidb = require('../mongo-models/apidb-model')
 const fs = require('fs');
+const stream = fs.createWriteStream("./owl/triples.ttl", {flags:'a'});
 
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
@@ -14,6 +15,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/webAPI', (req, res) => {
+
+    
     Apidb.find({}).stream()
         .on('data', function (doc) {
             let fname = doc.api.name.replace(/ /g, '-');
@@ -22,7 +25,7 @@ router.get('/webAPI', (req, res) => {
 
             check("webAPIs/"+fname, 'created_at', '"' + item.createdAt + '"');            
             check("webAPIs/"+fname, 'name', '"' + item.name + '"');
-            check("webAPIs/"+fname, 'description', '"' + item.description.replace(/"/g, "'") + '"');
+            check("webAPIs/"+fname, 'description', '"' + item.description.replace(/"/g, "'").replace(/\n/g, "").replace(/\#/g, "") + '"');
             check("webAPIs/"+fname, 'image', '"' + item.imageUrl + '"');
             check("webAPIs/"+fname, 'homepage', '"' + item.homePage + '"');
 
@@ -31,6 +34,7 @@ router.get('/webAPI', (req, res) => {
             check("webAPIs/"+fname, 'slug', '"' + item.slug + '"');
             check("webAPIs/"+fname, 'update_at', '"' + item.updatedAt + '"');
             check("webAPIs/"+fname, 'license_url', '"' + item.licenseUrl + '"');
+            check("webAPIs/"+fname, 'type', "<https://thesis-server-icsd14052-54.herokuapp.com/ontologies#WebAPI>");
 
             if(item.SSLSupport=="Yes")
             {
@@ -126,7 +130,7 @@ router.get('/webAPI', (req, res) => {
                         fitem = fitem.replace(/ /g, '-');
                         check("webAPIs/" + fname, 'hasSupportedReqFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats/' + fitem + '> ');
                         check("dataReqFormats/" + fitem, 'isSupportedReqFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
-                        console.log(fitem)
+                        // console.log(fitem)
                     })                
             }
 
@@ -150,6 +154,7 @@ router.get('/webAPI', (req, res) => {
         })
         .on('end', function () {
             console.log("hey im done")
+            //stream.end();
         });
 
     res.send("i am an ontology WEBAPI");
@@ -330,9 +335,11 @@ function addTtl(one, two, three) {
 
     three = three + " . \n";
 
-    fs.appendFile('./owl/triples.ttl', one + two + three, function (err) {
-        if (err) throw err;
-    });
+
+    stream.write(one + two + three );
+    // fs.appendFile('./owl/triples.ttl', one + two + three, function (err) {
+    //     if (err) throw err;
+    // });
 
 }
 

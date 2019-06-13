@@ -36,16 +36,17 @@ console.log(AssignedTagOf);
     })
    
     }else{
-        query="SELECT ?tagName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tags>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?tagName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-    
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tags>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
 
         request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
           console.log(JSON.parse(body).results.bindings.length);
           json = JSON.parse(body).results.bindings;
+          //console.log(json[i].subject.value)
+          //res.send(json);
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/tags/${json[i].tagName.value}">${json[i].tagName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -71,7 +72,7 @@ console.log(AssignedTagOf);
 
                               /* ------------------------------CATEGORIES----------------------------------------- */
 
-router.get('/categories/:name', (req, res) => {
+router.get('/categories/:name?', (req, res) => {
 
     if(req.params.name)
     {
@@ -90,15 +91,17 @@ console.log(AssignedCategoryOf);
     })
    
     }else{
-        query="SELECT ?categoryName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Categories>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?categoryName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-   
-        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
-          console.log(JSON.parse(body).results.bindings.length);
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Category>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
+        
+      request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+        //res.send(JSON.parse(body));    
+        console.log(JSON.parse(body).results.bindings.length);
           json = JSON.parse(body).results.bindings;
+          
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/categories/${json[i].categoryName.value}">${json[i].categoryName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -125,7 +128,7 @@ console.log(AssignedCategoryOf);
 });
                               /* ------------------------------PROVIDERS----------------------------------------- */
 
-router.get('/providers/:name', (req, res) => {
+router.get('/providers/:name?', (req, res) => {
 
     if(req.params.name)
     {
@@ -144,15 +147,15 @@ router.get('/providers/:name', (req, res) => {
     })    
    
     }else{
-        query="SELECT ?providerName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Providers>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?providerName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-    
-        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
-          console.log(JSON.parse(body).results.bindings.length);
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Provider>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
+        
+      request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+          //console.log(JSON.parse(body));
           json = JSON.parse(body).results.bindings;
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/providers/${json[i].providerName.value}">${json[i].providerName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -178,12 +181,12 @@ router.get('/providers/:name', (req, res) => {
 });
                               /* ------------------------------PROTOCOLS----------------------------------------- */
 
-router.get('/protocols/:name', (req, res) => {
+router.get('/protocols/:name?', (req, res) => {
 
     if(req.params.name)
     {
         protocolName = req.params.name;
-        query="select ?predicate ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/providers/"+protocolName+"> ?predicate ?object}";
+        query="select ?predicate ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols/"+protocolName+"> ?predicate ?object}";
 
         request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
       
@@ -192,13 +195,12 @@ router.get('/protocols/:name', (req, res) => {
         let isProtocolOf = JSON.parse(body).results.bindings.length;
 console.log(isProtocolOf);
         // let title = JSON.parse(body).results.bindings[0].tagName.value;
-         let type = "provider";
+         let type = "protocol";
          res.send(nsPrintProtocols(protocolName,type,parseInt(isProtocolOf)-2));
     })   
    
     }else{
-        query="SELECT ?protocolName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Protocols>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?protocolName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-   
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Protocols>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
    
         request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
           console.log(JSON.parse(body).results.bindings.length);
@@ -206,7 +208,7 @@ console.log(isProtocolOf);
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/protocols/${json[i].protocolName.value}">${json[i].protocolName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -233,7 +235,7 @@ console.log(isProtocolOf);
 });
                               /* ------------------------------DATAREQFORMATS----------------------------------------- */
 
-router.get('/dataReqFormats/:name', (req, res) => {
+router.get('/dataReqFormats/:name?', (req, res) => {
 
     if(req.params.name)
     {
@@ -247,20 +249,20 @@ router.get('/dataReqFormats/:name', (req, res) => {
           let isSupportedReqFormatTo = JSON.parse(body).results.bindings.length;
   console.log(isSupportedReqFormatTo);
           // let title = JSON.parse(body).results.bindings[0].tagName.value;
-           let type = "provider";
+           let type = "request format";
            res.send(nsPrintdataReqFormats(dataReqFormatsName,type,parseInt(isSupportedReqFormatTo)-2));
       })  
    
     }else{
-        query="SELECT ?dataReqFormatsName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#dataReqFormats>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?dataReqFormatsName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-   
-        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#DataRequestFormat>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
+        
+      request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
           console.log(JSON.parse(body).results.bindings.length);
           json = JSON.parse(body).results.bindings;
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/dataReqFormats/${json[i].dataReqFormatsName.value}">${json[i].dataReqFormatsName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -286,7 +288,7 @@ router.get('/dataReqFormats/:name', (req, res) => {
 });
                               /* ------------------------------DATARESFORMATS----------------------------------------- */
 
-router.get('/dataResFormats/:name', (req, res) => {
+router.get('/dataResFormats/:name?', (req, res) => {
 
     if(req.params.name)
     {
@@ -300,20 +302,20 @@ router.get('/dataResFormats/:name', (req, res) => {
         let isSupportedResFormatTo = JSON.parse(body).results.bindings.length;
 console.log(isSupportedResFormatTo);
         // let title = JSON.parse(body).results.bindings[0].tagName.value;
-         let type = "provider";
+         let type = "response format";
          res.send(nsPrintdataResFormats(dataResFormatsName,type,parseInt(isSupportedResFormatTo)-2));
     })  
    
     }else{
-        query="SELECT ?dataResFormatsName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#dataResFormats>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?dataResFormatsName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-    
-        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+      query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#DataResponseFormat>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object.}";
+       
+      request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
           console.log(JSON.parse(body).results.bindings.length);
           json = JSON.parse(body).results.bindings;
           var tr = "";
           for(var i = 0; i < json.length; i++) {
             var obj = json[i];
-            tr = tr + `<tr><td><a href="/ns/dataResFormats/${json[i].dataResFormatsName.value}">${json[i].dataResFormatsName.value}</a></td></tr>`;
+            tr = tr + `<tr><td><a href="/${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
             //console.log(obj);
         }
     
@@ -340,17 +342,14 @@ console.log(isSupportedResFormatTo);
 });
                               /* ------------------------------APIS----------------------------------------- */
 
-router.get('/webAPIs/:name', (req, res) => {
+router.get('/webAPIs/:name?', (req, res) => {
 
     if(req.params.name)
     {
         apiName = req.params.name;
         query="select ?predicate ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/"+apiName+"> ?predicate ?object}";
-   
-    }else{
-        query="SELECT ?dataResFormatsName ?type WHERE {?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#dataResFormats>.?aTag <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?dataResFormatsName. ?aTag <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type.}";
-    }
-    request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+
+        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
        
         //res.send(JSON.parse(body).results.bindings[0].type.value);
         //res.send(JSON.parse(body).results.bindings);
@@ -396,6 +395,39 @@ router.get('/webAPIs/:name', (req, res) => {
         res.send(body);
 
     })      
+   
+    }else{
+        query="select * where{?subject <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#WebAPI>.?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#name> ?object.}";
+    
+        request.get({url: "https://enoikio-database.herokuapp.com/ds/query", qs: {"query": query ,"output":"json"}}, function(err, response, body) {
+          console.log(JSON.parse(body).results.bindings.length);
+          json = JSON.parse(body).results.bindings;
+          var tr = "";
+          for(var i = 0; i < json.length; i++) {
+            var obj = json[i];
+            tr = tr + `<tr><td><a href="${json[i].subject.value}">${json[i].object.value}</a></td></tr>`;
+            //console.log(obj);
+        }
+    
+    
+        body = `
+        <html>
+          <header>
+          <style>${getTableStyle()}</style>
+          </header>
+          <body>
+          <table>${tr}</table>
+          </body>
+          </html>
+        `
+    
+        res.send(body);
+    
+            
+        })
+    
+      }
+    
 });
 
 

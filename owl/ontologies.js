@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Apidb = require('../mongo-models/apidb-model')
 const fs = require('fs');
-const stream = fs.createWriteStream("./owl/triples.ttl", {flags:'a'});
+const stream = fs.createWriteStream("./owl/triples.ttl", { flags: 'a' });
 
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
@@ -11,42 +11,45 @@ mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/tes
 });
 
 router.get('/', (req, res) => {
-    res.send("i am an ontology");
+    fs.readFile('owl/owl.owl', (err, data) =>{
+        if (err) {
+            throw err;
+        }
+        
+        res.send("<html><head></head><body><body><pre style='word-wrap: break-word; white-space: pre-wrap;'>"+data+"</pre></html>")
+    });
 });
 
 router.get('/webAPI', (req, res) => {
 
-    
+
     Apidb.find({}).stream()
         .on('data', function (doc) {
             let fname = doc.api.name.replace(/ /g, '-');
             let item = doc.api;
 
+            check("webAPIs/" + fname, 'created_at', '"' + item.createdAt + '"');
+            check("webAPIs/" + fname, 'name', '"' + item.name + '"');
+            check("webAPIs/" + fname, 'description', '"' + item.description.replace(/\r/g, "").replace(/\n/g, "").replace(/"/g, "'").replace(/\#/g, "").replace(/\\/g, "") + '"');
+            check("webAPIs/" + fname, 'image', '"' + item.imageUrl + '"');
+            check("webAPIs/" + fname, 'homepage', '"' + item.homePage + '"');
 
-            check("webAPIs/"+fname, 'created_at', '"' + item.createdAt + '"');            
-            check("webAPIs/"+fname, 'name', '"' + item.name + '"');
-            check("webAPIs/"+fname, 'description', '"' + item.description.replace(/\r/g, "").replace(/\n/g, "").replace(/"/g, "'").replace(/\#/g, "").replace(/\\/g, "") + '"');
-            check("webAPIs/"+fname, 'image', '"' + item.imageUrl + '"');
-            check("webAPIs/"+fname, 'homepage', '"' + item.homePage + '"');
+            check("webAPIs/" + fname, 'endpoint', '"' + item.endpoint + '"');
+            check("webAPIs/" + fname, 'swagger_url', '"' + item.swaggerUrl + '"');
+            check("webAPIs/" + fname, 'slug', '"' + item.slug + '"');
+            check("webAPIs/" + fname, 'update_at', '"' + item.updatedAt + '"');
+            check("webAPIs/" + fname, 'license_url', '"' + item.licenseUrl + '"');
+            check("webAPIs/" + fname, 'type', "<https://thesis-server-icsd14052-54.herokuapp.com/ontologies#WebAPI>");
 
-            check("webAPIs/"+fname, 'endpoint', '"' + item.endpoint + '"');
-            check("webAPIs/"+fname, 'swagger_url', '"' + item.swaggerUrl + '"');
-            check("webAPIs/"+fname, 'slug', '"' + item.slug + '"');
-            check("webAPIs/"+fname, 'update_at', '"' + item.updatedAt + '"');
-            check("webAPIs/"+fname, 'license_url', '"' + item.licenseUrl + '"');
-            check("webAPIs/"+fname, 'type', "<https://thesis-server-icsd14052-54.herokuapp.com/ontologies#WebAPI>");
-
-            if(item.SSLSupport=="Yes")
-            {
-                check("webAPIs/"+fname, 'SSLSupport', '"' + true + '"');
-            }else if(item.SSLSupport=="No")
-            {
-                check("webAPIs/"+fname, 'SSLSupport', '"' + false + '"');
+            if (item.SSLSupport == "Yes") {
+                check("webAPIs/" + fname, 'SSLSupport', '"' + true + '"');
+            } else if (item.SSLSupport == "No") {
+                check("webAPIs/" + fname, 'SSLSupport', '"' + false + '"');
             }
 
-            check("webAPIs/"+fname, 'auth_model', '"' + item.autheticationModel + '"');
-            check("webAPIs/"+fname, 'terms_of_service', '"' + item.termsOfServiceUrl + '"');
-            check("webAPIs/"+fname, 'doc_url', '"' + item.documentationUrl + '"');
+            check("webAPIs/" + fname, 'auth_model', '"' + item.autheticationModel + '"');
+            check("webAPIs/" + fname, 'terms_of_service', '"' + item.termsOfServiceUrl + '"');
+            check("webAPIs/" + fname, 'doc_url', '"' + item.documentationUrl + '"');
 
 
 
@@ -93,8 +96,7 @@ router.get('/webAPI', (req, res) => {
 
             }
 
-            if(item.category!="")
-            {
+            if (item.category != "") {
                 item.category.map(function (x) {
                     let fitem = x.replace(/ /g, '-').toLowerCase();
                     check("webAPIs/" + fname, 'hasCategory', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/categories/' + fitem + '> ');
@@ -103,48 +105,44 @@ router.get('/webAPI', (req, res) => {
                 })
             }
 
-            if(item.provider!="")
-            {
-                    let fitem = item.provider.replace(/ /g, '-').toLowerCase();
-                    check("webAPIs/" + fname, 'hasProvider', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/providers/' + fitem + '> ');
-                    check("providers/" + fitem, 'isProviderOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+            if (item.provider != "") {
+                let fitem = item.provider.replace(/ /g, '-').toLowerCase();
+                check("webAPIs/" + fname, 'hasProvider', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/providers/' + fitem + '> ');
+                check("providers/" + fitem, 'isProviderOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                // console.log(fitem)
+
+            }
+
+            if (item.architecturalModel != "") {
+                let fitem = item.architecturalModel.replace(/ /g, '-').toLowerCase();
+                check("webAPIs/" + fname, 'hasProtocol', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols/' + fitem + '> ');
+                check("protocols/" + fitem, 'isProtocolOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                // console.log(fitem)
+
+            }
+
+
+            if (item.supportedRequestFormats != "") {
+                let res = doc.api.supportedRequestFormats.split(", ");
+                res.map(function (x) {
+                    let fitem = x.replace(/^ /g, '')
+                    fitem = fitem.replace(/ /g, '-').toLowerCase();
+                    check("webAPIs/" + fname, 'hasSupportedReqFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats/' + fitem + '> ');
+                    check("dataReqFormats/" + fitem, 'isSupportedReqFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                     // console.log(fitem)
-                
+                })
             }
 
-            if(item.architecturalModel!="")
-            {
-                    let fitem = item.architecturalModel.replace(/ /g, '-').toLowerCase();
-                    check("webAPIs/" + fname, 'hasProtocol', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols/' + fitem + '> ');
-                    check("protocols/" + fitem, 'isProtocolOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+
+            if (item.supportedResponseFormats != "") {
+                let res = doc.api.supportedResponseFormats.split(", ");
+                res.map(function (x) {
+                    let fitem = x.replace(/^ /g, '')
+                    fitem = fitem.replace(/ /g, '-').toLowerCase();
+                    check("webAPIs/" + fname, 'hasSupportedResFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataResFormats/' + fitem + '> ');
+                    check("dataResFormats/" + fitem, 'isSupportedResFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                     // console.log(fitem)
-                
-            }
-
-
-            if(item.supportedRequestFormats!="")
-            {
-                    let res = doc.api.supportedRequestFormats.split(", ");
-                    res.map(function (x) {
-                        let fitem = x.replace(/^ /g, '')
-                        fitem = fitem.replace(/ /g, '-').toLowerCase();
-                        check("webAPIs/" + fname, 'hasSupportedReqFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats/' + fitem + '> ');
-                        check("dataReqFormats/" + fitem, 'isSupportedReqFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
-                        // console.log(fitem)
-                    })                
-            }
-
-
-            if(item.supportedResponseFormats!="")
-            {
-                    let res = doc.api.supportedResponseFormats.split(", ");
-                    res.map(function (x) {
-                        let fitem = x.replace(/^ /g, '')
-                        fitem = fitem.replace(/ /g, '-').toLowerCase();
-                        check("webAPIs/" + fname, 'hasSupportedResFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataResFormats/' + fitem + '> ');
-                        check("dataResFormats/" + fitem, 'isSupportedResFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
-                        // console.log(fitem)
-                    })                
+                })
             }
 
 
@@ -222,7 +220,7 @@ router.get('/turtleFirstAdd', (req, res) => {
             if (doc.api.architecturalModel != "") {
                 protocols.push(doc.api.architecturalModel);
             }
-            
+
 
             if (doc.api.supportedRequestFormats != "") {
 
@@ -336,7 +334,7 @@ function addTtl(one, two, three) {
     three = three + " . \n";
 
 
-    stream.write(one + two + three );
+    stream.write(one + two + three);
     // fs.appendFile('./owl/triples.ttl', one + two + three, function (err) {
     //     if (err) throw err;
     // });

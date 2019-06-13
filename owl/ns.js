@@ -365,8 +365,13 @@ router.get('/webAPIs/:name?', (req, res) => {
       //console.log (data)
       var tr = "";
       for (const key of Object.keys(data)) {
-        console.log(tr);
+        //console.log(tr);
+        if(data[key].includes("http"))
+        {
+          tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><a href="${data[key]}">${data[key]}</a></td></tr>`;
+        }else{
         tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td>${data[key]}</td></tr>`;
+        }
       }
       //console.log(tr);
       tr = tr + `<tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs">web API</a></td></tr>`;

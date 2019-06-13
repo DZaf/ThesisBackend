@@ -25,7 +25,7 @@ router.get('/webAPI', (req, res) => {
 
             check("webAPIs/"+fname, 'created_at', '"' + item.createdAt + '"');            
             check("webAPIs/"+fname, 'name', '"' + item.name + '"');
-            check("webAPIs/"+fname, 'description', '"' + item.description.replace(/"/g, "'").replace(/\n/g, "").replace(/\#/g, "") + '"');
+            check("webAPIs/"+fname, 'description', '"' + item.description.replace(/\r/g, "").replace(/\n/g, "").replace(/"/g, "'").replace(/\#/g, "").replace(/\\/g, "") + '"');
             check("webAPIs/"+fname, 'image', '"' + item.imageUrl + '"');
             check("webAPIs/"+fname, 'homepage', '"' + item.homePage + '"');
 
@@ -66,7 +66,7 @@ router.get('/webAPI', (req, res) => {
                     if (flag) {
                         res[0].map(function (x) {
                             let fitem = x.replace(/^ /g, '')
-                            fitem = fitem.replace(/ /g, '-');
+                            fitem = fitem.replace(/ /g, '-').toLowerCase();
                             check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + fitem + '> ');
                             check("tags/" + fitem, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                             // console.log(fitem)
@@ -74,7 +74,7 @@ router.get('/webAPI', (req, res) => {
                     } else {
                         item.tags.map(function (x) {
                             let fitem = x.replace(/^ /g, '')
-                            fitem = fitem.replace(/ /g, '-');
+                            fitem = fitem.replace(/ /g, '-').toLowerCase();
                             check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + fitem + '> ');
                             check("tags/" + fitem, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                             // console.log(fitem)
@@ -84,7 +84,7 @@ router.get('/webAPI', (req, res) => {
                     let res = item.tags.split(",");
                     res.map(function (x) {
                         let fitem = x.replace(/^ /g, '')
-                        fitem = fitem.replace(/ /g, '-');
+                        fitem = fitem.replace(/ /g, '-').toLowerCase();
                         check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + fitem + '> ');
                         check("tags/" + fitem, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                         // console.log(fitem)
@@ -96,7 +96,7 @@ router.get('/webAPI', (req, res) => {
             if(item.category!="")
             {
                 item.category.map(function (x) {
-                    let fitem = x.replace(/ /g, '-');
+                    let fitem = x.replace(/ /g, '-').toLowerCase();
                     check("webAPIs/" + fname, 'hasCategory', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/categories/' + fitem + '> ');
                     check("categories/" + fitem, 'isCategoryOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                     // console.log(fitem)
@@ -105,7 +105,7 @@ router.get('/webAPI', (req, res) => {
 
             if(item.provider!="")
             {
-                    let fitem = item.provider.replace(/ /g, '-');
+                    let fitem = item.provider.replace(/ /g, '-').toLowerCase();
                     check("webAPIs/" + fname, 'hasProvider', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/providers/' + fitem + '> ');
                     check("providers/" + fitem, 'isProviderOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                     // console.log(fitem)
@@ -114,7 +114,7 @@ router.get('/webAPI', (req, res) => {
 
             if(item.architecturalModel!="")
             {
-                    let fitem = item.architecturalModel.replace(/ /g, '-');
+                    let fitem = item.architecturalModel.replace(/ /g, '-').toLowerCase();
                     check("webAPIs/" + fname, 'hasProtocol', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols/' + fitem + '> ');
                     check("protocols/" + fitem, 'isProtocolOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                     // console.log(fitem)
@@ -127,7 +127,7 @@ router.get('/webAPI', (req, res) => {
                     let res = doc.api.supportedRequestFormats.split(", ");
                     res.map(function (x) {
                         let fitem = x.replace(/^ /g, '')
-                        fitem = fitem.replace(/ /g, '-');
+                        fitem = fitem.replace(/ /g, '-').toLowerCase();
                         check("webAPIs/" + fname, 'hasSupportedReqFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats/' + fitem + '> ');
                         check("dataReqFormats/" + fitem, 'isSupportedReqFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                         // console.log(fitem)
@@ -140,7 +140,7 @@ router.get('/webAPI', (req, res) => {
                     let res = doc.api.supportedResponseFormats.split(", ");
                     res.map(function (x) {
                         let fitem = x.replace(/^ /g, '')
-                        fitem = fitem.replace(/ /g, '-');
+                        fitem = fitem.replace(/ /g, '-').toLowerCase();
                         check("webAPIs/" + fname, 'hasSupportedResFormat', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/dataResFormats/' + fitem + '> ');
                         check("dataResFormats/" + fitem, 'isSupportedResFormatOf', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
                         // console.log(fitem)

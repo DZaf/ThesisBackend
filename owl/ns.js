@@ -352,20 +352,28 @@ router.get('/webAPIs/:name?', (req, res) => {
       let type = "web API";
       //res.send(nsPrintApis(apiName,type));
       var data = {};
-
+      var tagsTd = "";
       (JSON.parse(body).results.bindings).forEach(element => {
         //console.log(element.predicate.value.replace(/.*#/g, '').replace(/>/g, ''));
         el = element.predicate.value.replace(/.*#/g, '').replace(/>/g, '');
         val = element.object.value;
-        if (el != "type") {
+        console.log(element);
+        if (el == "hasTag") {
+          tagsTd = tagsTd + `<li><a href="${val}">${val.replace(/^.*\//g,'')}</a></li>`
+          data[el] = val;
+        }
+       else if (el != "type") {
           data[el] = val;
         }
 
       });
-      //console.log (data)
+      console.log (tagsTd)
       var tr = "";
       for (const key of Object.keys(data)) {
-        //console.log(tr);
+        console.log(key);
+        if(key == "hasTag"){
+          tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><ul>${tagsTd}</ul></td></tr>`;
+        }
         if(data[key].includes("http"))
         {
           tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><a href="${data[key]}">${data[key]}</a></td></tr>`;

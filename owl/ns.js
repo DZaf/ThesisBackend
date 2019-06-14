@@ -353,6 +353,7 @@ router.get('/webAPIs/:name?', (req, res) => {
       //res.send(nsPrintApis(apiName,type));
       var data = {};
       var tagsTd = "";
+      var categoriesTd = "";
       (JSON.parse(body).results.bindings).forEach(element => {
         //console.log(element.predicate.value.replace(/.*#/g, '').replace(/>/g, ''));
         el = element.predicate.value.replace(/.*#/g, '').replace(/>/g, '');
@@ -360,6 +361,10 @@ router.get('/webAPIs/:name?', (req, res) => {
         console.log(element);
         if (el == "hasTag") {
           tagsTd = tagsTd + `<li><a href="${val}">${val.replace(/^.*\//g,'')}</a></li>`
+          data[el] = val;
+        }
+       else if (el == "hasCategory") {
+        categoriesTd = categoriesTd + `<li><a href="${val}">${val.replace(/^.*\//g,'')}</a></li>`
           data[el] = val;
         }
        else if (el != "type") {
@@ -371,10 +376,13 @@ router.get('/webAPIs/:name?', (req, res) => {
       var tr = "";
       for (const key of Object.keys(data)) {
         console.log(key);
-        if(key == "hasTag"){
+        if (key == "hasCategory"){
+          tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><ul>${categoriesTd}</ul></td></tr>`;
+        }
+       else if(key == "hasTag"){
           tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><ul>${tagsTd}</ul></td></tr>`;
         }
-        if(data[key].includes("http"))
+        else if(data[key].includes("http"))
         {
           tr = tr + `<tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#${key}">${key}</a></td><td><a href="${data[key]}">${data[key]}</a></td></tr>`;
         }else{

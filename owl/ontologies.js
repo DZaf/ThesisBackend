@@ -420,6 +420,66 @@ router.get('/ApiTagger', (req, res) => {
 
 });
 
+router.get('/ApiCategory', (req, res) => {
+    checkForCategoriesToTags();
+
+    res.send("finished");
+
+});
+
+async function checkIfTagExistsAlready(value1, fname) {
+
+    query3 = "select * where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + value1 + "> ?subject <https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/" + fname + ">}"
+    request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query3, "output": "json" } }, function (err3, response3, body3) {
+        if (body3) {
+            if (JSON.parse(body3).results.bindings.length == 0) {
+                check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + value1 + '> ');
+                check("tags/" + value1, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+            }
+        }
+    })
+}
+
+const checkIfCategoryExistsUsATag = async function (value, fname) {
+    return new Promise((resolve, reject) => {
+        query2 = "select * where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + value + "> ?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tags>}"
+        request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query2, "output": "json" } }, function (err2, response2, body2) {
+            if (body2) {
+                if (JSON.parse(body2).results.bindings.length == 0) {
+                    addTtl("tags/" + value, 'title', '"' + value.replace(/-/g, ' ') + '"');
+                    addTtl("tags/" + value, 'type', '<https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tags>');
+                    check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + value + '> ');
+                    check("tags/" + value, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                    resolve();
+                }
+                else {
+                    checkIfTagExistsAlready(value, fname).then(resolve());
+
+                }
+            }
+        })
+    });
+
+}
+
+async function checkForCategoriesToTags() {
+
+    query = "select * where{ ?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasCategory> ?object}"
+    request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query, "output": "json" } }, function (err, response, body) {
+
+
+        for (let i = 0; i < JSON.parse(body).results.bindings.length; i++) {
+            let myObject = JSON.parse(body).results.bindings[i]
+            var value = myObject.object.value.replace(/^.*\//g, '').replace(/\>$/g, '');
+            let fname = myObject.subject.value.replace(/^.*\//g, '').replace(/\>$/g, '');
+            checkIfCategoryExistsUsATag(value, fname)
+        }
+
+
+    })
+
+}
+
 
 function addTtl(one, two, three) {
 

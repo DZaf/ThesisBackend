@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Apidb = require('../mongo-models/apidb-model')
 const fs = require('fs');
 const stream = fs.createWriteStream("./owl/triples.ttl", { flags: 'a' });
+const request = require('request');
 
 
 mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/test?retryWrites=true', {
@@ -11,12 +12,12 @@ mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/tes
 });
 
 router.get('/', (req, res) => {
-    fs.readFile('owl/owl.owl', (err, data) =>{
+    fs.readFile('owl/owl.owl', (err, data) => {
         if (err) {
             throw err;
         }
-        
-        res.send("<html><head></head><body><body><pre style='word-wrap: break-word; white-space: pre-wrap;'>"+data+"</pre></html>")
+
+        res.send("<html><head></head><body><body><pre style='word-wrap: break-word; white-space: pre-wrap;'>" + data + "</pre></html>")
     });
 });
 
@@ -316,6 +317,107 @@ router.get('/turtleFirstAdd', (req, res) => {
 
 
     res.send("i am an ontology");
+});
+
+router.get('/ApiTagger', (req, res) => {
+    var arrayOfNameTags = [];
+    var arrayOfNameTagsUnique = [];
+    Apidb.find({}).stream()
+        .on('data', function (doc) {
+            let fname = doc.api.name.replace(/ /g, '-');
+            let newArray = []
+            let arrayOfSplitedName = fname.split("-").filter(e => (e !== '' && e !== '/' && e !== '&'));
+            arrayOfSplitedName.map(function (x) {
+                x = x.split(/(?=[A-Z][a-z]+)/);
+                newArray = newArray.concat(x)
+                return x;
+            })
+            newArray = newArray.map(function (x) {
+                return x.toLowerCase().replace(/\)/g, '').replace(/\(/g, '').replace(/\//g, '').replace(/\,/g, '').replace(/^.?.$/g, '');
+            })
+            newArray = newArray.filter(onlyUnique).filter(e => (e != ''));
+            // console.log(newArray)
+            newArray.forEach(function (string) {
+                query = "select ?predicate ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + string + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object}"
+                request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query, "output": "json" } }, function (err, response, body) {
+                    if (body) {
+                        if (JSON.parse(body).results.bindings.length != 0) {
+                            query2 = "select ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/" + fname + "> ?object <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + string + "> }"
+                            request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query2, "output": "json" } }, function (err2, response2, body2) {
+                                if (body2) {
+                                    if (JSON.parse(body2).results.bindings.length == 0) {
+
+                                        check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + string + '> ');
+                                        check("tags/" + string, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                                        // console.log(query2);
+                                    }
+                                }
+                            })
+
+                        }
+                    } else {
+
+                    }
+                })
+
+
+                // 
+                //     check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + string + '> ');
+                //     check("tags/" + string, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                //     //console.log(stringTag+" den uparxei");
+                // 
+
+            })
+
+            arrayOfNameTags = arrayOfNameTags.concat(arrayOfSplitedName)
+
+
+            // console.log(arrayOfNameTags)
+            // console.log(arrayOfSplitedName);
+        }).on('error', function (err) {
+            // handle error
+        })
+        .on('end', function () {
+            arrayOfNameTags = arrayOfNameTags.filter(onlyUnique);
+            arrayOfNameTags.map(function (x) {
+                x = x.split(/(?=[A-Z][a-z]+)/);
+                arrayOfNameTagsUnique = arrayOfNameTagsUnique.concat(x)
+                return x;
+            })
+            arrayOfNameTagsUnique = arrayOfNameTagsUnique.map(function (x) {
+                return x.toLowerCase()
+            })
+            arrayOfNameTagsUnique = arrayOfNameTagsUnique.filter(onlyUnique);
+            var counter = 0;
+            arrayOfNameTagsUnique.forEach(function (stringTag) {
+                stringTag = stringTag.replace(/\)/g, '').replace(/\(/g, '').replace(/\//g, '').replace(/\,/g, '').replace(/^.?.$/g, '')
+                if (stringTag != "") {
+                    query = "select ?predicate ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + stringTag + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title> ?object}"
+                    request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query, "output": "json" } }, function (err, response, body) {
+                        if (body) {
+                            if (JSON.parse(body).results.bindings.length == 0) {
+                                addTtl("tags/" + stringTag, 'title', '"' + stringTag + '"');
+                                addTtl("tags/" + stringTag, 'type', '<https://thesis-server-icsd14052-54.herokuapp.com/ontologies#Tags>');
+                                //console.log(stringTag+" den uparxei");
+                            }
+                        }
+                    })
+
+                }
+            })
+
+
+
+
+
+            //console.log(arrayOfNameTagsUnique)
+            console.log("hey im done")
+
+            //stream.end();
+        });
+    res.send("finished");
+
+
 });
 
 

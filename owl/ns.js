@@ -451,7 +451,7 @@ function nsPrintTags(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi">assignedInApi</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/tags">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/tags">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi">assignedInApi</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/tags">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology.replace(/-/g, ' ')}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/tags">${type}</a></td></tr></table>
         </body>
         </html>
       `
@@ -471,7 +471,7 @@ function nsPrintCategories(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isCategoryOf">isCategoryOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/categories">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/categories">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isCategoryOf">isCategoryOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/categories">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology.replace(/-/g, ' ')}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/categories">${type}</a></td></tr></table>
         </body>
         </html>
       `
@@ -491,7 +491,7 @@ function nsPrintProviders(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProviderOf">isProviderOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/providers">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/providers">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProviderOf">isProviderOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/providers">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology.replace(/-/g, ' ')}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/providers">${type}</a></td></tr></table>
         </body>
         </html>
       `
@@ -511,7 +511,7 @@ function nsPrintProtocols(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProtocolOf">isProtocolOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/protocols">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isProtocolOf">isProtocolOf</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/protocols">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology.replace(/-/g, ' ')}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/protocols">${type}</a></td></tr></table>
         </body>
         </html>
       `
@@ -531,7 +531,7 @@ function nsPrintdataReqFormats(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedReqFormatTo">isSupportedReqFormatTo</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/dataReqFormats">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedReqFormatTo">isSupportedReqFormatTo</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/dataReqFormats">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology.replace(/-/g, ' ')}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/dataReqFormats">${type}</a></td></tr></table>
         </body>
         </html>
       `
@@ -551,7 +551,7 @@ function nsPrintdataResFormats(ontology, type, assingedNum) {
         </header>
         <body>
         <h2>${ontology}</h2>
-        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedResFormatTo">isSupportedResFormatTo</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/dataResFormats">${assingedNum}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/dataResFormats">${type}</a></td></tr></table>
+        <table><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#isSupportedResFormatTo">isSupportedResFormatTo</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/assigned/${ontology}/dataResFormats">${assingedNum.replace(/-/g, ' ')}</a></td></tr><tr><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ontologies#title">Title</a></td><td>${ontology}</td></tr><tr><td><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">Type</a></td><td><a href="https://thesis-server-icsd14052-54.herokuapp.com/ns/dataResFormats">${type}</a></td></tr></table>
         </body>
         </html>
       `

@@ -5,7 +5,8 @@ const productSchema = mongoose.Schema({
     name: String,
     surname: String,
     email: String,
-    password: String
+    password: String,
+    searched: { type : Array , "default" : [] }
 });
 
 module.exports = mongoose.model('User',productSchema);

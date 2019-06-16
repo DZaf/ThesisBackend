@@ -7,6 +7,7 @@ mongoose.connect('mongodb+srv://admin:admin@thesis-cluster-9doea.mongodb.net/tes
 //ΕΔΩ ΤΟΠΟΘΕΤΟΎΜΕ ΤΟ "PATH" ΑΠΟ ΤΑ ΑΡΧΕΙΑ ΠΟΥ ΘΈΛΟΥΜΕ Ο ΧΡΉΣΤΗΣ ΝΑ ΑΝΑΚΑΤΕΥΘΕΊΝΕΤΑΙ (1)
 var users = require('./api/users');
 var github = require('./api/github');
+var search = require('./api/search');
 var apiscrawler = require('./crawlers/apis.io/apiscrawler');
 var pwcrawler = require('./crawlers/pw/pwcrawler');
 var apiguru = require('./crawlers/apisguru/apigurucrawler');
@@ -38,6 +39,7 @@ app.use('/element/pw',pwelement);
 app.use('/mergers/',pwmerger);
 app.use('/ontologies/',ontology);
 app.use('/ns/',ns);
+app.use('/search/',search);
 // app.use(express.static(path.join("./owl/triples.ttl", 'public')));
 
 

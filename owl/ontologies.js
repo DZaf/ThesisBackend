@@ -354,10 +354,20 @@ router.get('/ApiTagger', (req, res) => {
                                 }
                             })
 
-                        }
-                    } else {
+                        }else{
+                            query2 = "select ?object where{ <https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/" + fname + "> ?object <https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + string + "> }"
+                            request.get({ url: "https://enoikio-database.herokuapp.com/ds/query", qs: { "query": query2, "output": "json" } }, function (err2, response2, body2) {
+                                if (body2) {
+                                    if (JSON.parse(body2).results.bindings.length == 0) {
 
-                    }
+                                        check("webAPIs/" + fname, 'hasTag', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/' + string + '> ');
+                                        check("tags/" + string, 'assignedInApi', '<https://thesis-server-icsd14052-54.herokuapp.com/ns/webAPIs/' + fname + '> ');
+                                        // console.log(query2);
+                                    }
+                                }
+                            })
+                        }
+                    } 
                 })
 
 

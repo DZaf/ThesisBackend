@@ -131,6 +131,7 @@ router.post('/login', (req, res) => {
                             success: 'true',
                             message: correctPassword,
                             token : token,
+                            email: req.body.email
                         });
                     }
                 })

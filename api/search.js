@@ -19,14 +19,56 @@ router.get('/:email/', function (req, res, next) {
                 tags.push(req.query.tags);
             }
             if (req.query.SSLSupport) {
-                var SSLSupport=req.query.SSLSupport
+                var SSLSupport = req.query.SSLSupport
             }
-            else{
-                var SSLSupport=""
+            else {
+                var SSLSupport = ""
+            }
+            if (req.query.hasProvider) {
+                var hasProvider = req.query.hasProvider
+            }
+            else {
+                var hasProvider = ""
+            }
+            if (req.query.doc_url) {
+                var doc_url = req.query.doc_url
+            }
+            else {
+                var doc_url = ""
+            }
+            if (req.query.auth_model) {
+                var auth_model = req.query.auth_model
+            }
+            else {
+                var auth_model = ""
+            }
+            if (req.query.license_url) {
+                var license_url = req.query.license_url
+            }
+            else {
+                var license_url = ""
+            }
+            if (req.query.hasProtocol) {
+                var hasProtocol = req.query.hasProtocol
+            }
+            else {
+                var hasProtocol = ""
+            }
+            if (req.query.hasSupportedReqFormat) {
+                var hasSupportedReqFormat = req.query.hasSupportedReqFormat
+            }
+            else {
+                var hasSupportedReqFormat = ""
+            }
+            if (req.query.hasSupportedResFormat) {
+                var hasSupportedResFormat = req.query.hasSupportedResFormat
+            }
+            else {
+                var hasSupportedResFormat = ""
             }
 
             // console.log(tags)
-            getTagsFromArray(tags,SSLSupport).then((webApiUriArray) => {
+            getTagsFromArray(tags, SSLSupport, hasProvider, doc_url,auth_model,license_url,hasProtocol,hasSupportedReqFormat,hasSupportedResFormat).then((webApiUriArray) => {
                 let uniqueOnlyResult = webApiUriArray.filter(onlyUnique);
                 getApisFromArray(uniqueOnlyResult).then((webApis) => {
                     //---------- Εχουμε τα αποτελεσματα του search
@@ -70,11 +112,11 @@ router.get('/:email/', function (req, res, next) {
     }
 });
 
-async function getTagsFromArray(arrayOfTags,SSLSupport) {
+async function getTagsFromArray(arrayOfTags, SSLSupport, hasProvider, doc_url,auth_model,license_url,hasProtocol,hasSupportedReqFormat,hasSupportedResFormat) {
     var combinedArray = [];
     var onlyValuesArray = [];
     for (let i = 0; i < arrayOfTags.length; i++) {
-        let tempArray = await getData(arrayOfTags[i],SSLSupport)
+        let tempArray = await getData(arrayOfTags[i], SSLSupport, hasProvider,doc_url,auth_model,license_url,hasProtocol,hasSupportedReqFormat,hasSupportedResFormat)
         combinedArray = combinedArray.concat(tempArray);
     }
     for (let i = 0; i < combinedArray.length; i++) {
@@ -138,13 +180,34 @@ function getDataFromWebApi(webApiUri) {
 
 
 
-function getData(TagName,SSLSupport) {
-    query = "select * where{<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + TagName + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi> ?subject.";
-    if(SSLSupport!="")
-    {
-        query= query+ "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#SSLSupport> 'true'." 
+function getData(TagName, SSLSupport, hasProvider, doc_url,auth_model,license_url,hasProtocol,hasSupportedReqFormat,hasSupportedResFormat) {
+    query = "select ?subject where{<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + TagName + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi> ?subject.";
+    if (SSLSupport != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#SSLSupport> '" + SSLSupport + "'."
     }
-    query= query+"}"
+    if (hasProvider != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasProvider> ?a .FILTER regex(str(?a), '" + hasProvider + "')."
+    }
+    if (doc_url == "true") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#doc_url> ?b."
+    }
+    if (auth_model != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#auth_model> ?c .FILTER regex(str(?c), '" + auth_model + "')."
+    }
+    if (license_url == "true") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#license_url> ?d."
+    }
+    if (hasProtocol != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasProtocol> ?e .FILTER regex(str(?e), '" + hasProtocol + "')."
+    }
+    if (hasSupportedReqFormat != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasSupportedReqFormat> ?f .FILTER regex(str(?f), '" + hasSupportedReqFormat + "')."
+    }
+    if (hasSupportedResFormat != "") {
+        query = query + "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#hasSupportedResFormat> ?g .FILTER regex(str(?g), '" + hasSupportedResFormat + "')."
+    }
+    query = query + "}"
+    console.log(query)
     // Return new promise 
     return new Promise(function (resolve, reject) {
         // Do async job

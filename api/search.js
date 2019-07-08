@@ -14,18 +14,24 @@ router.get('/:email/', function (req, res, next) {
         if (req.query.tags) {
             if (req.query.tags instanceof Array) {
                 var tags = req.query.tags;
-                ;
             } else {
                 var tags = [];
                 tags.push(req.query.tags);
             }
+            if (req.query.SSLSupport) {
+                var SSLSupport=req.query.SSLSupport
+            }
+            else{
+                var SSLSupport=""
+            }
+
             // console.log(tags)
-            getTagsFromArray(tags).then((webApiUriArray) => {
+            getTagsFromArray(tags,SSLSupport).then((webApiUriArray) => {
                 let uniqueOnlyResult = webApiUriArray.filter(onlyUnique);
                 getApisFromArray(uniqueOnlyResult).then((webApis) => {
                     //---------- Εχουμε τα αποτελεσματα του search
 
-                    findBestApi("dzaf2@gmail.com").then((user) => {
+                    findBestApi(email).then((user) => {
                         let arrayOfPrefferes = user[0].searched;
                         if (arrayOfPrefferes) {
                             addTagsToUser(user[0], tags).then((updatedUser) => {
@@ -64,11 +70,11 @@ router.get('/:email/', function (req, res, next) {
     }
 });
 
-async function getTagsFromArray(arrayOfTags) {
+async function getTagsFromArray(arrayOfTags,SSLSupport) {
     var combinedArray = [];
     var onlyValuesArray = [];
     for (let i = 0; i < arrayOfTags.length; i++) {
-        let tempArray = await getData(arrayOfTags[i])
+        let tempArray = await getData(arrayOfTags[i],SSLSupport)
         combinedArray = combinedArray.concat(tempArray);
     }
     for (let i = 0; i < combinedArray.length; i++) {
@@ -132,8 +138,13 @@ function getDataFromWebApi(webApiUri) {
 
 
 
-function getData(TagName) {
-    query = "select * where{<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + TagName + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi> ?subject}";
+function getData(TagName,SSLSupport) {
+    query = "select * where{<https://thesis-server-icsd14052-54.herokuapp.com/ns/tags/" + TagName + "> <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#assignedInApi> ?subject.";
+    if(SSLSupport!="")
+    {
+        query= query+ "?subject <https://thesis-server-icsd14052-54.herokuapp.com/ontologies#SSLSupport> 'true'." 
+    }
+    query= query+"}"
     // Return new promise 
     return new Promise(function (resolve, reject) {
         // Do async job

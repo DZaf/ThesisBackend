@@ -11,7 +11,7 @@ const octokit = new Octokit()
 //Μεταβλητή για το πόσα αποτελέσματα να επιστρέφει η αναζήτηση στο git ανα σελίδα
 const REPOSITORY_PER_PAGE = "3";
 //Μεταβλητή για το ποιά σελίδα θα επιστρέψει η αναζήτηση στο git
-const GIT_SEARCH_PAGE = "1";
+const GIT_SEARCH_PAGE = "3";
 const request = require('request');
 
 router.get('/', function (req, res, next) {
@@ -47,30 +47,33 @@ router.get("/content/dir/:owner/:repo_name", (req, res) => {
     if (req.params.owner) {
         if (req.params.repo_name) {
             if (req.query.path) {
+                path = req.query.path;
+            }else{
+                path=''
+            }
                 jsonData = {};
                 owner = req.params.owner;
                 repo = req.params.repo_name;
-                path = req.query.path;
-                jsonData["owner"]=owner;
-                jsonData["repo_name"]=repo;
-                jsonData["path"]=path;
+               
+                jsonData["owner"] = owner;
+                jsonData["repo_name"] = repo;
+                jsonData["path"] = path;
                 jsonData["dir_tree"] = [];
                 //κάνουμε αίτημα μέσω του octokit στο repository για να πάρουμε το περιεχόμενο και χρειαζόμαστε τις παραπάνω παραμέτρους
-                octokit.repos.getContents({ owner, repo, path}).then(result => {
+                octokit.repos.getContents({ owner, repo, path }).then(result => {
                     //για κάθε αρχείο που βρίσκουμε φτιάχνουμε το δικό μας json για να έχουμε τα δεδομένα που χρειαζόμαστε
                     result.data.forEach(function (file) {
                         var dir_json = {}
-                        dir_json["name"]=file.name;
-                        dir_json["path"]=file.path;
-                        dir_json["url"]=file.html_url;
-                        dir_json["type"]=file.type;
-                        dir_json["conten_url"]=file.download_url;
-                        if(file.type=="dir")
-                        {
-                            dir_json["isdir"]=true;
-                        }else{
-                            dir_json["isdir"]=false;
-                            dir_json["conten_url"]=file.download_url;
+                        dir_json["name"] = file.name;
+                        dir_json["path"] = file.path;
+                        dir_json["url"] = file.html_url;
+                        dir_json["type"] = file.type;
+                        dir_json["conten_url"] = file.download_url;
+                        if (file.type == "dir") {
+                            dir_json["isdir"] = true;
+                        } else {
+                            dir_json["isdir"] = false;
+                            dir_json["conten_url"] = file.download_url;
                         }
                         jsonData["dir_tree"].push(dir_json);
 
@@ -95,9 +98,6 @@ router.get("/content/dir/:owner/:repo_name", (req, res) => {
                     // }
                 })
                 //Αν δεν υπάρχει κάτι στέλνουμε το κατάλληλο μύνημα
-            } else {                
-                res.status("400").send({ "code": "400", "message": "path is required" })
-            }
         } else {
             res.status("400").send({ "code": "400", "message": "repo_name is required" })
         }
@@ -126,16 +126,19 @@ router.get('/:search/(:language)?', (req, res) => {
         order = "desc";
         per_page = REPOSITORY_PER_PAGE;
         page = GIT_SEARCH_PAGE
-        
+
         //κάνουμε αίτημα μέσω του octokit στο git για να πάρουμε το περιεχόμενο της αναζήτησης του git για repositories με τα παραπάνω δεδομένα
-        octokit.search.repos({ q, sort, order, per_page, page }).then(result => {
+       octokit.search.repos({ q, sort, order, per_page, page }).then(result => {
             if (parseInt(result.data.total_count) > 0) {
                 //αν έχει αποτελέσματα φτιάχνουμε το δικό μας json δέντρο με τα δεδομένα που χρειαζόμαστε
                 var viewData = {
                     repos: []
                 };
+                //console.log(result.data.items);
                 //για κάθε repository
-                result.data.items.forEach(function (reposi) {
+                for (let j = 0; j < result.data.items.length; j++) {
+                    reposi = result.data.items[j]
+                    console.log(reposi.owner.login);
                     var jsonData = {};
                     //αποθηκεύουμε τα στοιχεία που χρειαζόμαστε
                     jsonData["owner_name"] = reposi.owner.login;
@@ -150,42 +153,56 @@ router.get('/:search/(:language)?', (req, res) => {
                     owner = reposi.owner.login;
                     repo = reposi.name;
                     path = "";
-                    jsonData["repo_tree"] = [];
+
+                    //jsonData["repo_tree"] = [];
                     //για κάθε αρχικό φάκελο (home folder) 
-                    octokit.repos.getContents({ owner, repo, path }).then(result => {
-                        if (result.data) {
-                            //για κάθε φάκελο-αρχείο αποθηκεύουμε τα στοιχεια που χρειαζόμαστε
-                            result.data.forEach(function (file) {
-                                var tree_json = {}
-                                tree_json["type"] = file.type;
-                                tree_json["name"] = file.name;
-                                tree_json["path"] = file.path;
-                                if (file.type == "dir") {
-                                    tree_json["isdir"] = true;
-                                    tree_json["conten_url"]=file.download_url;
-                                }
-                                else {
-                                    tree_json["isdir"] = false;
-                                    tree_json["conten_url"] = file.download_url;
-                                }
-                                jsonData["repo_tree_size"] = jsonData["repo_tree"].length;
-                                jsonData["repo_tree"].push(tree_json);
-                                viewData.repos.push(jsonData)
-                            });
+                    // octokit.repos.getContents({ owner, repo, path }).then(result => {
+                    //     console.log(reposi.owner.login);
+                    //     if (result.data) {
+                    //         var tree_json = {}
+                    //         //για κάθε φάκελο-αρχείο αποθηκεύουμε τα στοιχεια που χρειαζόμαστε
+                    //         for (let i = 0; i < result.data.length; i++) {
+                    //             let file = result.data[i];
+                    //             tree_json["type"] = file.type;
+                    //             tree_json["name"] = file.name;
+                    //             tree_json["path"] = file.path;
+                    //             if (file.type == "dir") {
+                    //                 tree_json["isdir"] = true;
+                    //                 tree_json["conten_url"] = file.download_url;
+                    //             }
+                    //             else {
+                    //                 tree_json["isdir"] = false;
+                    //                 tree_json["conten_url"] = file.download_url;
+                    //             }
+                    //             jsonData["repo_tree_size"] = jsonData["repo_tree"].length;
+                    //             jsonData["repo_tree"].push(tree_json);
 
 
-                        }
-                    }).catch(error => {
-                        //αν υπάρχει πρόβλημα απλά δεν θα υπάρχει δέντρο (πολλές φορές υπερβαίνουμε τα όρια των αιτημάτων )
-                        jsonData["repo_tree_size"] = 0;
-                    }).then(() => {
-                        //viewData.repos.push(jsonData)
-                        res.send(viewData);
-                    });
+                    //         }
+                    //         // console.log(jsonData)
+                    //         viewData.repos.push(jsonData)
+                    //         // result.data.forEach(function (file) {
+                    //         //     var tree_json = {}
 
-                });
+                    //         // });
+
+
+                    //     }
+                    // }).catch(error => {
+                    //     //αν υπάρχει πρόβλημα απλά δεν θα υπάρχει δέντρο (πολλές φορές υπερβαίνουμε τα όρια των αιτημάτων )
+                    //     jsonData["repo_tree_size"] = 0;
+                    // }).then(() => {
+                    //     //viewData.repos.push(jsonData)
+                    //     viewData.repos.push(jsonData)
+                    //     res.send(viewData);
+                    // });
+
+                    viewData.repos.push(jsonData)
+                        //res.send(viewData);
+                }
+                res.send(viewData);
             }
-             //αν δεν βρεθούν αποτελέσματα
+            //αν δεν βρεθούν αποτελέσματα
             else {
                 res.status("200").send({ "code": "200", "message": "No results found" });
             }

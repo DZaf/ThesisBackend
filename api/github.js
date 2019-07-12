@@ -122,13 +122,14 @@ router.get('/:search/(:language)?', (req, res) => {
             q = req.params.search + '+language:' + req.params.language;
         }
         else { q = req.params.search; }
-        sort = "stars";
-        order = "desc";
+        //sort = "stars";
+        //order = "desc";
         per_page = REPOSITORY_PER_PAGE;
         //page = GIT_SEARCH_PAGE
+        //, sort, order,
 
         //κάνουμε αίτημα μέσω του octokit στο git για να πάρουμε το περιεχόμενο της αναζήτησης του git για repositories με τα παραπάνω δεδομένα
-       octokit.search.repos({ q, sort, order, per_page }).then(result => {
+       octokit.search.repos({ q per_page }).then(result => {
             if (parseInt(result.data.total_count) > 0) {
                 //αν έχει αποτελέσματα φτιάχνουμε το δικό μας json δέντρο με τα δεδομένα που χρειαζόμαστε
                 var viewData = {

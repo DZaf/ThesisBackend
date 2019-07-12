@@ -11,7 +11,7 @@ const octokit = new Octokit()
 //Μεταβλητή για το πόσα αποτελέσματα να επιστρέφει η αναζήτηση στο git ανα σελίδα
 const REPOSITORY_PER_PAGE = "3";
 //Μεταβλητή για το ποιά σελίδα θα επιστρέψει η αναζήτηση στο git
-const GIT_SEARCH_PAGE = "3";
+const GIT_SEARCH_PAGE = "1";
 const request = require('request');
 
 router.get('/', function (req, res, next) {
@@ -170,6 +170,7 @@ router.get('/:search/(:language)?', (req, res) => {
                                 }
                                 jsonData["repo_tree_size"] = jsonData["repo_tree"].length;
                                 jsonData["repo_tree"].push(tree_json);
+                                viewData.repos.push(jsonData)
                             });
 
 
@@ -178,7 +179,7 @@ router.get('/:search/(:language)?', (req, res) => {
                         //αν υπάρχει πρόβλημα απλά δεν θα υπάρχει δέντρο (πολλές φορές υπερβαίνουμε τα όρια των αιτημάτων )
                         jsonData["repo_tree_size"] = 0;
                     }).then(() => {
-                        viewData.repos.push(jsonData)
+                        //viewData.repos.push(jsonData)
                         res.send(viewData);
                     });
 

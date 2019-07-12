@@ -9,7 +9,7 @@ const Octokit = require('@octokit/rest')
 const octokit = new Octokit()
 
 //Μεταβλητή για το πόσα αποτελέσματα να επιστρέφει η αναζήτηση στο git ανα σελίδα
-const REPOSITORY_PER_PAGE = "1";
+const REPOSITORY_PER_PAGE = "3";
 //Μεταβλητή για το ποιά σελίδα θα επιστρέψει η αναζήτηση στο git
 const GIT_SEARCH_PAGE = "1";
 const request = require('request');
